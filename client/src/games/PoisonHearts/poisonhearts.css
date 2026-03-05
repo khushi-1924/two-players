@@ -1,0 +1,29 @@
+.game-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.heart-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 80px);
+  gap: 15px;
+  justify-content: center;
+}
+
+.heart {
+  cursor: pointer;
+}
+
+.heart-icon {
+  font-size: 60px;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.heart-icon:hover {
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 2px currentColor);
+}
