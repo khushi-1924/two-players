@@ -49,6 +49,8 @@ h1, h2, h3 {
   background: rgba(0,0,0,0.75);
   color: white;
   text-align: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: larger;
 
   padding: 15px;
 

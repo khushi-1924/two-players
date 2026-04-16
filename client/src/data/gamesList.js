@@ -26,5 +26,12 @@ export const gamesList = [
     path: "/game/poison-hearts",
     description: "Pick hearts carefully, one is poisoned.",
     image: "/images/poison-hearts.png"
+  },
+  {
+    id: 5,
+    name: "Guess the Number",
+    path: "/game/guess-the-number",
+    description: "Guess the Number I'm thinking of.",
+    image: "/images/guess-the-number.png"
   }
 ];
