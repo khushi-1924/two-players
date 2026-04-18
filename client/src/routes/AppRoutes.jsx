@@ -7,6 +7,7 @@ import RockPaperScissors from '../games/RockPaperScissors/RockPaperScissors'
 import ConnectFour from '../games/ConnectFour/ConnectFour'
 import GuessTheNumber from '../games/GuessTheNumber/GuessTheNumber'
 import Login from '../pages/Login'
+import Signup from '../pages/Signup'
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route path='/game/connect-four' element={<ConnectFour />} />
         <Route path='/game/guess-the-number' element={<GuessTheNumber />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<Signup />} />
 
     </Routes>
   )
