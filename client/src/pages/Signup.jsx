@@ -6,10 +6,10 @@ const Signup = () => {
   const [password, setPassword] = useState("");
 
   return (
-    <div className='text-center p-4 bg-gradient-to-br from-[#020229] to-[#00001c] min-h-screen w-screen flex flex-col items-center'>
+    <div className='text-center p-4 bg-gradient-to-br from-[#020229] to-[#00001c] max-h-screen w-full flex flex-col items-center'>
       <h1 className='text-4xl p-3 text-purple-900'>Two Player Games</h1>
 
-      <div className='h-1/2 w-1/3 my-24 py-6 bg-white/10 rounded-lg border border-white shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300'>
+      <div className='h-full w-full lg:h-1/2 lg:w-1/3 my-24 py-6 bg-white/10 rounded-lg border border-white shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300'>
         <p className='text-center text-sky-200 text-4xl py-4 font-semibold'>Register</p>
 
         <form className='flex flex-col justify-center items-center p-10 gap-6 w-full'>
