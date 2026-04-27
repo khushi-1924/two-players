@@ -1,9 +1,35 @@
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
+import useAuthStore from '../store/authStore';
+import { signupUser } from '../api/authApi';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const loginStore = useAuthStore((state) => state.login);
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await signupUser({
+        name,
+        username,
+        password
+      });
+
+      loginStore(res.data.user, res.data.token);
+
+      navigate('/');
+
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Signup failed");
+    }
+  };
 
   return (
     <div className='text-center p-4 bg-gradient-to-br from-[#020229] to-[#00001c] max-h-screen w-full flex flex-col items-center'>
@@ -12,7 +38,7 @@ const Signup = () => {
       <div className='h-full w-full lg:h-1/2 lg:w-1/3 my-24 py-6 bg-white/10 rounded-lg border border-white shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] transition-all duration-300'>
         <p className='text-center text-sky-200 text-4xl py-4 font-semibold'>Register</p>
 
-        <form className='flex flex-col justify-center items-center p-10 gap-6 w-full'>
+        <form onSubmit={handleSignup} className='flex flex-col justify-center items-center p-10 gap-6 w-full'>
           <input type="text" onChange={(e) => setName(e.target.value)} placeholder='Name' value={name} className='w-3/4 bg-white/20 text-white text-lg placeholder:text-white/50 rounded-full px-6 py-3 outline-none ring-0 focus:ring-2 focus:ring-white transition-all duration-300' />
 
           <input type="text" onChange={(e) => setUsername(e.target.value)} placeholder='Username' value={username} className='w-3/4 bg-white/20 text-white text-lg placeholder:text-white/50 rounded-full px-6 py-3 outline-none ring-0 focus:ring-2 focus:ring-white transition-all duration-300' />
