@@ -6,16 +6,21 @@ const Grid = () => {
   const [isXTurn, setIsXTurn] = useState(true);
   const [winner, setWinner] = useState(null);
   const [winningCells, setWinningCells] = useState([]);
+  const [isDraw, setIsDraw] = useState(false);
+  const [score, setScore] = useState({
+      X: 0,
+      O: 0
+  });
 
   const winningPatterns = [
-    [0,1,2],
-    [3,4,5],
-    [6,7,8],
-    [0,3,6],
-    [1,4,7],
-    [2,5,8],
-    [0,4,8],
-    [2,4,6]
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
   ];
 
   const handleClick = (index) => {
@@ -31,7 +36,15 @@ const Grid = () => {
     if (result) {
       setWinner(result.winner);
       setWinningCells(result.cells);
-    } else {
+      setScore(prev => ({
+          ...prev,
+          [result.winner]: prev[result.winner] + 1
+      }));
+    }
+    else if (newBoard.every(cell => cell !== null)) {
+      setIsDraw(true);
+    }
+    else {
       setIsXTurn(!isXTurn);
     }
   };
@@ -121,9 +134,14 @@ const Grid = () => {
 
   return (
     <div className='flex flex-col items-center gap-6'>
-      
+
       <p className='text-xl text-white'>
-        {winner ? `Winner: ${winner}` : `Turn: ${isXTurn ? 'X' : 'O'}`}
+        {winner
+            ? `Winner: ${winner}`
+            : isDraw
+                ? "It's a Draw!"
+                : `Turn: ${isXTurn ? 'X' : 'O'}`
+        }
       </p>
 
       <div className='relative'>
@@ -132,6 +150,7 @@ const Grid = () => {
             <Cell
               key={index}
               value={val}
+              isWinning={winningCells.includes(index)}
               onClick={() => handleClick(index)}
             />
           ))}
@@ -152,6 +171,10 @@ const Grid = () => {
       >
         Play Again
       </button>
+
+      <div classname='text-lg text-white mt-10'>
+        X: {score.X} | O: {score.O}
+      </div>
 
     </div>
   )

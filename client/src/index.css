@@ -67,3 +67,16 @@ h1, h2, h3 {
 .game-card:hover .game-overlay {
   transform: translateY(0);
 }
+
+@keyframes pop {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-pop {
+    animation: pop 0.2s ease-out;
+}
