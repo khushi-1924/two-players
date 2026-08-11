@@ -1,10 +1,22 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 import Grid from './Grid';
+import { useEffect } from 'react';
+import socket from '../../socket/socket';
 
 const TicTacToe = () => {
   const location = useLocation();
   const { game } = location.state || {};
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
+
+    return () => {
+      socket.off("connect");
+    };
+  }, []);
   return (
     <div className="game-container">
       <h1 className='text-4xl my-4 text-pink-300'>{game?.name || 'Tic Tac Toe'}</h1>
