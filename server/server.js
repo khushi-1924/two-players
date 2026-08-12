@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true
   }
 });
@@ -21,9 +21,10 @@ dotenv.config();
 connectDB();
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL,
   credentials: true
 }));
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
