@@ -172,7 +172,7 @@ const Grid = () => {
         Play Again
       </button>
 
-      <div classname='text-lg text-white mt-10'>
+      <div className='text-lg text-white mt-10'>
         X: {score.X} | O: {score.O}
       </div>
 

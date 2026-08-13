@@ -3,6 +3,9 @@ import { gamesList } from '../data/gamesList'
 import GameCard from '../components/GameCard'
 
 const Home = () => {
+  const roomId = sessionStorage.getItem("roomId");
+
+  console.log("Current room:", roomId);
   return (
     <div className='flex flex-col justify-center items-center'>
       <h1 className='my-3 text-3xl font-bold text-sky-200'>Multiplayer Games</h1>

@@ -8,6 +8,10 @@ import ConnectFour from '../games/ConnectFour/ConnectFour'
 import GuessTheNumber from '../games/GuessTheNumber/GuessTheNumber'
 import Login from '../pages/Login'
 import Signup from '../pages/Signup'
+import RoomSelection from '../rooms/RoomSelection';
+import CreateRoom from '../rooms/CreateRoom';
+import JoinRoom from '../rooms/JoinRoom';
+import GameRoom from '../rooms/GameRoom';
 
 const AppRoutes = () => {
   return (
@@ -20,6 +24,10 @@ const AppRoutes = () => {
         <Route path='/game/guess-the-number' element={<GuessTheNumber />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
+        <Route path="/rooms" element={<RoomSelection />} />
+        <Route path="/create-room" element={<CreateRoom />} />
+        <Route path="/join-room" element={<JoinRoom />} />
+        <Route path="/game-room" element={<GameRoom />} />
 
     </Routes>
   )

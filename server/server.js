@@ -10,14 +10,17 @@ import gameSocket from './sockets/gameSocket.js';
 const app = express();
 const server = http.createServer(app);
 
+dotenv.config();
+
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST"],
     credentials: true
   }
 });
 
-dotenv.config(); 
+console.log("CLIENT_URL:", process.env.CLIENT_URL);
 connectDB();
 
 app.use(cors({
