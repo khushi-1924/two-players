@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import socket from '../socket/socket';
+import PlayerName from '../components/PlayerName/PlayerName';
 
 const RoomSelection = () => {
 
@@ -13,6 +14,10 @@ const RoomSelection = () => {
 
     const [copied, setCopied] = useState(false);
     const [error, setError] = useState('');
+
+    const [playerName, setPlayerName] = useState(
+        localStorage.getItem('playerName')
+    );
 
     // Room created
     useEffect(() => {
@@ -59,7 +64,7 @@ const RoomSelection = () => {
                 data.roomId
             );
 
-            navigate("/");
+            navigate("/home");
         };
 
         socket.on(
@@ -150,6 +155,12 @@ const RoomSelection = () => {
             <h1 className="text-5xl font-bold text-pink-300 mb-12">
                 Two Player
             </h1>
+
+            {!playerName && (
+                <PlayerName
+                    onSave={(name) => setPlayerName(name)}
+                />
+            )}
 
 
             <div className="flex flex-col gap-5 w-64">

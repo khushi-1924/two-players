@@ -5,6 +5,11 @@ import Grid from './Grid';
 const TicTacToe = () => {
   const location = useLocation();
   const { game } = location.state || {};
+  
+  // <-- Get the roomId from sessionStorage -->
+  const roomId = sessionStorage.getItem("roomId");
+  console.log("Tic Tac Toe room:", roomId);
+
 
   return (
     <div className="game-container">

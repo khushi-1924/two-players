@@ -16,7 +16,8 @@ import GameRoom from '../rooms/GameRoom';
 const AppRoutes = () => {
   return (
     <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<RoomSelection />} />
+        <Route path='/home' element={<Home />} />
         <Route path='/game/poison-hearts' element={<PoisonHearts />} />
         <Route path='/game/tic-tac-toe' element={<TicTacToe />} />
         <Route path='/game/rps' element={<RockPaperScissors />} />
@@ -24,7 +25,6 @@ const AppRoutes = () => {
         <Route path='/game/guess-the-number' element={<GuessTheNumber />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
-        <Route path="/rooms" element={<RoomSelection />} />
         <Route path="/create-room" element={<CreateRoom />} />
         <Route path="/join-room" element={<JoinRoom />} />
         <Route path="/game-room" element={<GameRoom />} />
