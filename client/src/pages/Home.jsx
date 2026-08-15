@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { gamesList } from '../data/gamesList'
 import GameCard from '../components/GameCard'
+import { FiEdit2 } from "react-icons/fi";
 
 const Home = () => {
   const roomId = sessionStorage.getItem("roomId");
@@ -26,27 +27,42 @@ const Home = () => {
             setEditedName(playerName);
             setShowEditName(true);
           }}
-          className="w-44 h-12
+          className="relative w-44 h-12
                rounded-lg
                bg-[#0a0a2a]
                border border-blue-500
                text-white font-semibold
-               flex items-center justify-center
-               transition-all duration-200
-               hover:bg-white
-               hover:text-black"
+               overflow-hidden
+               transition-colors duration-300
+               hover:bg-white hover:text-black"
         >
-          {/* Normal state */}
-          <span className="group-hover:hidden">
+
+          {/* Name */}
+          <span
+            className="absolute inset-0
+                 flex items-center justify-center
+                 transition-all duration-300 ease-out
+                 opacity-100 scale-100
+                 group-hover:opacity-0
+                 group-hover:scale-95"
+          >
             {playerName}
           </span>
 
-          {/* Hover state */}
-          <span className="hidden group-hover:flex
-                     items-center gap-2">
-            <span className="text-lg">✎</span>
+
+          {/* Edit */}
+          <span
+            className="absolute inset-0
+                 flex items-center justify-center gap-2
+                 transition-all duration-300 ease-out
+                 opacity-0 scale-95
+                 group-hover:opacity-100
+                 group-hover:scale-100"
+          >
+            <FiEdit2 size={17} />
             <span>Edit</span>
           </span>
+
         </button>
 
       </div>
