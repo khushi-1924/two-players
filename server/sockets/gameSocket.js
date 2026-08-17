@@ -148,6 +148,12 @@ const gameSocket = (io) => {
                     `Game already running in room ${roomId}`
                 );
 
+                socket.emit("gameStarted", {
+                    game: room.currentGame.name,
+                    board: room.currentGame.board,
+                    currentPlayer: room.currentGame.currentPlayer
+                });
+
                 return;
             }
 
