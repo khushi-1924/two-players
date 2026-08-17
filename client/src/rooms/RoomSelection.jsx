@@ -54,14 +54,16 @@ const RoomSelection = () => {
 
         const handleRoomReady = (data) => {
 
-            console.log(
-                "Room ready:",
-                data.roomId
-            );
+            console.log("Room ready:", data);
 
             sessionStorage.setItem(
                 "roomId",
                 data.roomId
+            );
+
+            sessionStorage.setItem(
+                "playerNumber",
+                data.playerNumber
             );
 
             navigate("/home");
@@ -108,7 +110,11 @@ const RoomSelection = () => {
 
         setError('');
 
-        socket.emit("createRoom");
+        const playerName = localStorage.getItem("playerName");
+
+        socket.emit("createRoom", {
+            name: playerName
+        });
     };
 
 
@@ -121,10 +127,12 @@ const RoomSelection = () => {
             return;
         }
 
-        socket.emit(
-            "joinRoom",
-            joinRoomId
-        );
+        const playerName = localStorage.getItem("playerName");
+
+        socket.emit("joinRoom", {
+            roomId: joinRoomId,
+            name: playerName
+        });
     };
 
 

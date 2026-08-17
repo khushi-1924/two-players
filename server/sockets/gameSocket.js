@@ -13,7 +13,7 @@ const gameSocket = (io) => {
         console.log("Player connected:", socket.id);
 
         // CREATE ROOM
-        socket.on("createRoom", () => {
+        socket.on("createRoom", ({ name }) => {
 
             let roomId = generateRoomId();
 
@@ -22,12 +22,17 @@ const gameSocket = (io) => {
             }
 
             rooms[roomId] = {
-                players: []
+                players: [],
+                currentGame: null
             };
 
             socket.join(roomId);
 
-            rooms[roomId].players.push(socket.id);
+            rooms[roomId].players.push({
+                socketId: socket.id,
+                name: name,
+                playerNumber: 1
+            });
 
             console.log(`Room created: ${roomId}`);
             console.log(`Creator: ${socket.id}`);
@@ -39,7 +44,7 @@ const gameSocket = (io) => {
 
 
         // JOIN ROOM
-        socket.on("joinRoom", (roomId) => {
+        socket.on("joinRoom", ({ roomId, name }) => {
 
             roomId = roomId.trim().toUpperCase();
 
@@ -67,7 +72,11 @@ const gameSocket = (io) => {
 
             socket.join(roomId);
 
-            rooms[roomId].players.push(socket.id);
+            rooms[roomId].players.push({
+                socketId: socket.id,
+                name: name,
+                playerNumber: 2
+            });
 
             console.log(
                 `${socket.id} joined room ${roomId}`
@@ -81,14 +90,88 @@ const gameSocket = (io) => {
             // Both players are now connected
             if (rooms[roomId].players.length === 2) {
 
-                io.to(roomId).emit("roomReady", {
-                    roomId
+                const players = rooms[roomId].players;
+
+                players.forEach((player) => {
+                    io.to(player.socketId).emit("roomReady", {
+                        roomId,
+                        players,
+                        playerNumber: player.playerNumber
+                    });
                 });
 
                 console.log(
                     `Room ${roomId} is ready`
                 );
             }
+        });
+
+        // START GAME
+        socket.on("startGame", ({ roomId, game }) => {
+
+            console.log(
+                `${socket.id} wants to start ${game} in room ${roomId}`
+            );
+
+            const room = rooms[roomId];
+
+            // Room doesn't exist
+            if (!room) {
+                socket.emit("gameError", {
+                    message: "Room not found"
+                });
+
+                return;
+            }
+
+            // Need exactly 2 players
+            if (room.players.length !== 2) {
+                socket.emit("gameError", {
+                    message: "Waiting for another player"
+                });
+
+                return;
+            }
+
+            // Only Tic Tac Toe for now
+            if (game !== "ticTacToe") {
+                socket.emit("gameError", {
+                    message: "Game not supported"
+                });
+
+                return;
+            }
+
+            // If a game is already running, don't create another one
+            if (room.currentGame) {
+                console.log(
+                    `Game already running in room ${roomId}`
+                );
+
+                return;
+            }
+
+            // Create Tic Tac Toe state
+            room.currentGame = {
+                name: "ticTacToe",
+
+                board: Array(9).fill(null),
+
+                currentPlayer: 1,
+
+                status: "playing"
+            };
+
+            console.log(
+                `Tic Tac Toe started in room ${roomId}`
+            );
+
+            // Send game state to both players
+            io.to(roomId).emit("gameStarted", {
+                game: "ticTacToe",
+                board: room.currentGame.board,
+                currentPlayer: room.currentGame.currentPlayer
+            });
         });
 
 
