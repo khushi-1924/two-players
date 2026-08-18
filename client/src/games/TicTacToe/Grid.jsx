@@ -1,111 +1,70 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Cell from './Cell';
 
-const Grid = () => {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [isXTurn, setIsXTurn] = useState(true);
-  const [winner, setWinner] = useState(null);
-  const [winningCells, setWinningCells] = useState([]);
-  const [isDraw, setIsDraw] = useState(false);
-  const [score, setScore] = useState({
-      X: 0,
-      O: 0
-  });
-
-  const winningPatterns = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-
-  const handleClick = (index) => {
-    if (board[index] || winner) return;
-
-    const newBoard = [...board];
-    newBoard[index] = isXTurn ? 'X' : 'O';
-
-    const result = checkWinner(newBoard);
-
-    setBoard(newBoard);
-
-    if (result) {
-      setWinner(result.winner);
-      setWinningCells(result.cells);
-      setScore(prev => ({
-          ...prev,
-          [result.winner]: prev[result.winner] + 1
-      }));
-    }
-    else if (newBoard.every(cell => cell !== null)) {
-      setIsDraw(true);
-    }
-    else {
-      setIsXTurn(!isXTurn);
-    }
-  };
-
-  const checkWinner = (currentBoard) => {
-    for (let pattern of winningPatterns) {
-      const [a, b, c] = pattern;
-
-      if (
-        currentBoard[a] &&
-        currentBoard[a] === currentBoard[b] &&
-        currentBoard[a] === currentBoard[c]
-      ) {
-        return {
-          winner: currentBoard[a],
-          cells: pattern
-        };
-      }
-    }
-
-    return null;
-  };
+const Grid = ({
+  board,
+  currentPlayer,
+  playerNumber,
+  winningCells = [],
+  winner,
+  isDraw,
+  scores = { 1: 0, 2: 0 },
+  onCellClick
+}) => {
 
   const getWinningLineStyle = (cells) => {
+
     const styles = {
+
+      // Top row
       "0,1,2": {
         width: "100%",
         height: "3px",
         top: "16%",
         left: 0
       },
+
+      // Middle row
       "3,4,5": {
         width: "100%",
         height: "3px",
         top: "50%",
         left: 0
       },
+
+      // Bottom row
       "6,7,8": {
         width: "100%",
         height: "3px",
         top: "83%",
         left: 0
       },
+
+      // Left column
       "0,3,6": {
         width: "3px",
         height: "100%",
         left: "16%",
         top: 0
       },
+
+      // Middle column
       "1,4,7": {
         width: "3px",
         height: "100%",
         left: "50%",
         top: 0
       },
+
+      // Right column
       "2,5,8": {
         width: "3px",
         height: "100%",
         left: "83%",
         top: 0
       },
+
+      // Diagonal \
       "0,4,8": {
         width: "140%",
         height: "3px",
@@ -113,6 +72,8 @@ const Grid = () => {
         left: "-20%",
         transform: "rotate(45deg)"
       },
+
+      // Diagonal /
       "2,4,6": {
         width: "140%",
         height: "3px",
@@ -125,55 +86,76 @@ const Grid = () => {
     return styles[cells.join(",")];
   };
 
-  const resetGame = () => {
-    setBoard(Array(9).fill(null));
-    setIsXTurn(true);
-    setWinner(null);
-    setWinningCells([]);
-  };
+
+  const winningLineStyle =
+    winningCells.length > 0
+      ? getWinningLineStyle(winningCells)
+      : null;
+
 
   return (
     <div className='flex flex-col items-center gap-6'>
 
+      {/* Game status */}
       <p className='text-xl text-white'>
         {winner
-            ? `Winner: ${winner}`
-            : isDraw
-                ? "It's a Draw!"
-                : `Turn: ${isXTurn ? 'X' : 'O'}`
+          ? `Winner: ${winner}`
+          : isDraw
+            ? "It's a Draw!"
+            : currentPlayer
+              ? `Turn: ${currentPlayer === 1 ? 'X' : 'O'}`
+              : 'Waiting...'
         }
       </p>
 
+
+      {/* Board */}
       <div className='relative'>
+
         <div className='grid grid-cols-3 gap-2'>
-          {board.map((val, index) => (
+
+          {board.map((value, index) => (
+
             <Cell
               key={index}
-              value={val}
+              value={value}
               isWinning={winningCells.includes(index)}
-              onClick={() => handleClick(index)}
+              onClick={() => onCellClick(index)}
             />
+
           ))}
+
         </div>
 
-        {winningCells.length > 0 && (
+
+        {/* Winning line */}
+        {winningLineStyle && (
           <div
-            className={`absolute bg-white rounded-full`}
-            style={getWinningLineStyle(winningCells)}
+            className='absolute bg-white rounded-full z-20 pointer-events-none'
+            style={winningLineStyle}
           />
         )}
+
       </div>
 
-      <button
-        onClick={resetGame}
-        className='mt-8 px-6 py-3 rounded-xl bg-blue-500 text-white font-semibold
-                  hover:bg-blue-600 transition shadow-lg'
-      >
-        Play Again
-      </button>
 
-      <div className='text-lg text-white mt-10'>
-        X: {score.X} | O: {score.O}
+      {/* Player information */}
+      <p className='text-lg text-gray-400'>
+
+        You are Player {playerNumber}
+
+        {' — '}
+
+        {playerNumber === 1 ? 'X' : 'O'}
+
+      </p>
+
+
+      {/* Score */}
+      <div className='text-lg text-white'>
+
+        X: {scores[1]} | O: {scores[2]}
+
       </div>
 
     </div>
