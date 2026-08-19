@@ -80,7 +80,9 @@ const gameSocket = (io) => {
                 scores: {
                     1: 0,
                     2: 0
-                }
+                },
+
+                playAgainRequest: null
             };
 
 
@@ -282,6 +284,8 @@ const gameSocket = (io) => {
                 board: Array(9).fill(null),
 
                 currentPlayer: 1,
+
+                startingPlayer: 1,
 
                 status: "playing",
 
@@ -541,6 +545,270 @@ const gameSocket = (io) => {
             });
 
         });
+
+        // =====================================================
+        // PLAY AGAIN REQUEST
+        // =====================================================
+
+        socket.on("playAgainRequest", ({ roomId }) => {
+
+            const room = rooms[roomId];
+
+            // Room doesn't exist
+            if (!room) {
+                socket.emit("gameError", {
+                    message: "Room not found"
+                });
+
+                return;
+            }
+
+
+            // Game doesn't exist
+            if (!room.currentGame) {
+                socket.emit("gameError", {
+                    message: "No game found"
+                });
+
+                return;
+            }
+
+
+            // Game must be finished
+            if (room.currentGame.status !== "finished") {
+                socket.emit("gameError", {
+                    message: "Game is still in progress"
+                });
+
+                return;
+            }
+
+
+            // Find the player requesting another game
+            const player = room.players.find(
+                (p) => p.socketId === socket.id
+            );
+
+            if (!player) {
+                socket.emit("gameError", {
+                    message: "You are not in this room"
+                });
+
+                return;
+            }
+
+
+            // Don't allow duplicate requests
+            if (room.playAgainRequest) {
+
+                socket.emit("gameError", {
+                    message: "A Play Again request is already pending"
+                });
+
+                return;
+            }
+
+
+            // Store the request
+            room.playAgainRequest = {
+                from: player.playerNumber
+            };
+
+
+            console.log(
+                `${player.name} requested to play again in room ${roomId}`
+            );
+
+
+            // Find the other player
+            const opponent = room.players.find(
+                (p) => p.playerNumber !== player.playerNumber
+            );
+
+
+            if (!opponent) {
+                return;
+            }
+
+
+            // Send request to opponent
+            io.to(opponent.socketId).emit(
+                "playAgainRequested",
+                {
+                    playerName: player.name,
+                    game: room.currentGame.name
+                }
+            );
+
+        });
+
+        // =====================================================
+        // PLAY AGAIN RESPONSE
+        // =====================================================
+
+        socket.on(
+            "playAgainResponse",
+            ({ roomId, accepted }) => {
+
+                const room = rooms[roomId];
+
+                // Room doesn't exist
+                if (!room) {
+                    socket.emit("gameError", {
+                        message: "Room not found"
+                    });
+
+                    return;
+                }
+
+
+                // No pending request
+                if (!room.playAgainRequest) {
+
+                    socket.emit("gameError", {
+                        message: "No Play Again request"
+                    });
+
+                    return;
+                }
+
+
+                // Find the player responding
+                const player = room.players.find(
+                    (p) => p.socketId === socket.id
+                );
+
+                if (!player) {
+
+                    socket.emit("gameError", {
+                        message: "You are not in this room"
+                    });
+
+                    return;
+                }
+
+
+                // Make sure the responder is NOT
+                // the person who originally requested
+                if (
+                    player.playerNumber ===
+                    room.playAgainRequest.from
+                ) {
+
+                    socket.emit("gameError", {
+                        message: "You cannot respond to your own request"
+                    });
+
+                    return;
+                }
+
+
+                // Find the requester
+                const requester = room.players.find(
+                    (p) =>
+                        p.playerNumber ===
+                        room.playAgainRequest.from
+                );
+
+
+                // =================================================
+                // DECLINED
+                // =================================================
+
+                if (!accepted) {
+
+                    console.log(
+                        `${player.name} declined Play Again`
+                    );
+
+
+                    if (requester) {
+
+                        io.to(requester.socketId).emit(
+                            "playAgainDeclined",
+                            {
+                                playerName: player.name
+                            }
+                        );
+
+                    }
+
+
+                    // Remove pending request
+                    room.playAgainRequest = null;
+
+                    return;
+                }
+
+
+                // =================================================
+                // ACCEPTED
+                // =================================================
+
+                console.log(
+                    `${player.name} accepted Play Again`
+                );
+
+
+                // Alternate who starts the next round
+                const previousStarter =
+                    room.currentGame.currentPlayer === null
+                        ? room.currentGame.startingPlayer
+                        : room.currentGame.startingPlayer;
+
+
+                const nextStarter =
+                    previousStarter === 1
+                        ? 2
+                        : 1;
+
+
+                // Create a fresh Tic Tac Toe game
+                room.currentGame = {
+
+                    name: "ticTacToe",
+
+                    board: Array(9).fill(null),
+
+                    currentPlayer: nextStarter,
+
+                    startingPlayer: nextStarter,
+
+                    status: "playing",
+
+                    winner: null,
+
+                    winningCells: []
+
+                };
+
+
+                // Remove pending request
+                room.playAgainRequest = null;
+
+
+                console.log(
+                    `New Tic Tac Toe round started in room ${roomId}`
+                );
+
+
+                // Tell BOTH players
+                io.to(roomId).emit(
+                    "gameRestarted",
+                    {
+                        game: "ticTacToe",
+
+                        board: room.currentGame.board,
+
+                        currentPlayer:
+                            room.currentGame.currentPlayer,
+
+                        scores: room.scores
+                    }
+                );
+
+            }
+        );
 
 
         // =====================================================

@@ -9,7 +9,8 @@ const Grid = ({
   winner,
   isDraw,
   scores = { 1: 0, 2: 0 },
-  onCellClick
+  onCellClick,
+  onPlayAgain
 }) => {
 
   const getWinningLineStyle = (cells) => {
@@ -157,6 +158,18 @@ const Grid = ({
         X: {scores[1]} | O: {scores[2]}
 
       </div>
+
+      {winner || isDraw ? (
+        <button
+          onClick={onPlayAgain}
+          className='mt-4 px-6 py-3 rounded-xl
+                   bg-blue-500 text-white font-semibold
+                   hover:bg-blue-600 transition
+                   shadow-lg'
+        >
+          Play Again
+        </button>
+      ) : null}
 
     </div>
   )
