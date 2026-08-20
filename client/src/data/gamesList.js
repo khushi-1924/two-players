@@ -1,6 +1,7 @@
 export const gamesList = [
   {
     id: 1,
+    gameId: "ticTacToe",
     name: "Tic Tac Toe",
     path: "/game/tic-tac-toe",
     description: "Classic 2-player strategy game.",
@@ -8,6 +9,7 @@ export const gamesList = [
   },
   {
     id: 2,
+    gameId: "connectFour",
     name: "Connect Four",
     path: "/game/connect-four",
     description: "Drop discs and connect four.",
@@ -15,6 +17,7 @@ export const gamesList = [
   },
   {
     id: 3,
+    gameId: "rockPaperScissors",
     name: "Rock Paper Scissors",
     path: "/game/rps",
     description: "Quick reaction game.",
@@ -22,6 +25,7 @@ export const gamesList = [
   },
   {
     id: 4,
+    gameId: "poisonHearts",
     name: "Poison Hearts",
     path: "/game/poison-hearts",
     description: "Pick hearts carefully, one is poisoned.",
@@ -29,6 +33,7 @@ export const gamesList = [
   },
   {
     id: 5,
+    gameId: "guessTheNumber",
     name: "Guess the Number",
     path: "/game/guess-the-number",
     description: "Guess the Number I'm thinking of.",

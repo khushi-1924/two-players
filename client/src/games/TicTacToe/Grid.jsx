@@ -1,23 +1,39 @@
-import React from 'react'
+import React from 'react';
+
 import Cell from './Cell';
 
+import PlayAgainButton from '../../components/PlayAgain/PlayAgainButton';
+
+
 const Grid = ({
+
   board,
+
   currentPlayer,
+
   playerNumber,
+
   winningCells = [],
+
   winner,
+
   isDraw,
+
   scores = { 1: 0, 2: 0 },
+
   onCellClick,
-  onPlayAgain
+
+  onPlayAgain,
+
+  waitingForResponse
+
 }) => {
+
 
   const getWinningLineStyle = (cells) => {
 
     const styles = {
 
-      // Top row
       "0,1,2": {
         width: "100%",
         height: "3px",
@@ -25,7 +41,6 @@ const Grid = ({
         left: 0
       },
 
-      // Middle row
       "3,4,5": {
         width: "100%",
         height: "3px",
@@ -33,7 +48,6 @@ const Grid = ({
         left: 0
       },
 
-      // Bottom row
       "6,7,8": {
         width: "100%",
         height: "3px",
@@ -41,7 +55,6 @@ const Grid = ({
         left: 0
       },
 
-      // Left column
       "0,3,6": {
         width: "3px",
         height: "100%",
@@ -49,7 +62,6 @@ const Grid = ({
         top: 0
       },
 
-      // Middle column
       "1,4,7": {
         width: "3px",
         height: "100%",
@@ -57,7 +69,6 @@ const Grid = ({
         top: 0
       },
 
-      // Right column
       "2,5,8": {
         width: "3px",
         height: "100%",
@@ -65,7 +76,6 @@ const Grid = ({
         top: 0
       },
 
-      // Diagonal \
       "0,4,8": {
         width: "140%",
         height: "3px",
@@ -74,7 +84,6 @@ const Grid = ({
         transform: "rotate(45deg)"
       },
 
-      // Diagonal /
       "2,4,6": {
         width: "140%",
         height: "3px",
@@ -82,38 +91,56 @@ const Grid = ({
         left: "-20%",
         transform: "rotate(-45deg)"
       }
+
     };
 
     return styles[cells.join(",")];
+
   };
 
 
   const winningLineStyle =
+
     winningCells.length > 0
+
       ? getWinningLineStyle(winningCells)
+
       : null;
 
 
   return (
-    <div className='flex flex-col items-center gap-6'>
 
-      {/* Game status */}
-      <p className='text-xl text-white'>
+    <div className="flex flex-col items-center gap-6">
+
+
+      {/* GAME STATUS */}
+
+      <p className="text-xl text-white">
+
         {winner
+
           ? `Winner: ${winner}`
+
           : isDraw
+
             ? "It's a Draw!"
+
             : currentPlayer
+
               ? `Turn: ${currentPlayer === 1 ? 'X' : 'O'}`
+
               : 'Waiting...'
+
         }
+
       </p>
 
 
-      {/* Board */}
-      <div className='relative'>
+      {/* BOARD */}
 
-        <div className='grid grid-cols-3 gap-2'>
+      <div className="relative">
+
+        <div className="grid grid-cols-3 gap-2">
 
           {board.map((value, index) => (
 
@@ -129,19 +156,29 @@ const Grid = ({
         </div>
 
 
-        {/* Winning line */}
+        {/* WINNING LINE */}
+
         {winningLineStyle && (
+
           <div
-            className='absolute bg-white rounded-full z-20 pointer-events-none'
+            className="
+              absolute
+              bg-white
+              rounded-full
+              z-20
+              pointer-events-none
+            "
             style={winningLineStyle}
           />
+
         )}
 
       </div>
 
 
-      {/* Player information */}
-      <p className='text-lg text-gray-400'>
+      {/* PLAYER INFORMATION */}
+
+      <p className="text-lg text-gray-400">
 
         You are Player {playerNumber}
 
@@ -152,27 +189,31 @@ const Grid = ({
       </p>
 
 
-      {/* Score */}
-      <div className='text-lg text-white'>
+      {/* SCORE */}
+
+      <div className="text-lg text-white">
 
         X: {scores[1]} | O: {scores[2]}
 
       </div>
 
-      {winner || isDraw ? (
-        <button
+
+      {/* PLAY AGAIN */}
+
+      {(winner || isDraw) && (
+
+        <PlayAgainButton
           onClick={onPlayAgain}
-          className='mt-4 px-6 py-3 rounded-xl
-                   bg-blue-500 text-white font-semibold
-                   hover:bg-blue-600 transition
-                   shadow-lg'
-        >
-          Play Again
-        </button>
-      ) : null}
+          waitingForResponse={waitingForResponse}
+        />
+
+      )}
 
     </div>
-  )
-}
 
-export default Grid
+  );
+
+};
+
+
+export default Grid;

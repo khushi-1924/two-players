@@ -810,6 +810,227 @@ const gameSocket = (io) => {
             }
         );
 
+        // ==========================================
+        // SEND GAME INVITATION
+        // ==========================================
+
+        socket.on("sendGameInvitation", ({ roomId, game }) => {
+
+            const room = rooms[roomId];
+
+            if (!room) {
+                socket.emit("gameError", {
+                    message: "Room not found"
+                });
+
+                return;
+            }
+
+            const sender = room.players.find(
+                (player) => player.socketId === socket.id
+            );
+
+            const receiver = room.players.find(
+                (player) => player.socketId !== socket.id
+            );
+
+            if (!sender || !receiver) {
+                socket.emit("gameError", {
+                    message: "Another player is not available"
+                });
+
+                return;
+            }
+
+            console.log(
+                `${sender.name} invited ${receiver.name} to play ${game}`
+            );
+
+            // Send invitation only to the other player
+            io.to(receiver.socketId).emit("gameInvitationReceived", {
+                roomId,
+                game,
+                senderName: sender.name,
+                senderSocketId: sender.socketId
+            });
+
+            // Let sender know invitation was sent
+            socket.emit("gameInvitationSent", {
+                game
+            });
+
+        });
+
+        // ==========================================
+        // RESPOND TO GAME INVITATION
+        // ==========================================
+
+        socket.on(
+            "respondToGameInvitation",
+            ({ roomId, game, accepted, senderSocketId }) => {
+
+                const room = rooms[roomId];
+
+                if (!room) {
+                    return;
+                }
+
+                const responder = room.players.find(
+                    (player) => player.socketId === socket.id
+                );
+
+                if (!responder) {
+                    return;
+                }
+
+                if (accepted) {
+
+                    console.log(
+                        `${responder.name} accepted invitation for ${game}`
+                    );
+
+                    // Tell both players to open the game
+                    io.to(roomId).emit(
+                        "gameInvitationAccepted",
+                        {
+                            game
+                        }
+                    );
+
+                } else {
+
+                    console.log(
+                        `${responder.name} declined invitation for ${game}`
+                    );
+
+                    // Tell only the sender
+                    io.to(senderSocketId).emit(
+                        "gameInvitationDeclined",
+                        {
+                            game,
+                            playerName: responder.name
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+        // =====================================================
+        // SEND GAME INVITATION
+        // =====================================================
+
+        socket.on(
+            "sendGameInvitation",
+            ({ roomId, game }) => {
+
+                const room = rooms[roomId];
+
+                if (!room) {
+                    socket.emit("gameError", {
+                        message: "Room not found"
+                    });
+
+                    return;
+                }
+
+                const sender = room.players.find(
+                    player => player.socketId === socket.id
+                );
+
+                const receiver = room.players.find(
+                    player => player.socketId !== socket.id
+                );
+
+                if (!sender || !receiver) {
+                    socket.emit("gameError", {
+                        message: "Another player is required"
+                    });
+
+                    return;
+                }
+
+                console.log(
+                    `${sender.name} invited ${receiver.name} to ${game}`
+                );
+
+                io.to(receiver.socketId).emit(
+                    "gameInvitation",
+                    {
+                        roomId,
+                        game,
+                        playerName: sender.name
+                    }
+                );
+
+            }
+        );
+
+        // =====================================================
+        // RESPONSE TO GAME INVITATION
+        // =====================================================
+
+        socket.on(
+            "respondGameInvitation",
+            ({ roomId, game, accepted }) => {
+
+                const room = rooms[roomId];
+
+                if (!room) {
+                    return;
+                }
+
+                const responder = room.players.find(
+                    player => player.socketId === socket.id
+                );
+
+                if (!responder) {
+                    return;
+                }
+
+                if (accepted) {
+
+                    console.log(
+                        `${responder.name} accepted invitation for ${game}`
+                    );
+
+                    io.to(roomId).emit(
+                        "gameInvitationAccepted",
+                        {
+                            roomId,
+                            game
+                        }
+                    );
+
+                } else {
+
+                    console.log(
+                        `${responder.name} declined invitation for ${game}`
+                    );
+
+                    const sender = room.players.find(
+                        player => player.socketId !== socket.id
+                    );
+
+                    if (sender) {
+
+                        io.to(sender.socketId).emit(
+                            "gameInvitationDeclined",
+                            {
+                                roomId,
+                                game,
+                                playerName: responder.name
+                            }
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
 
         // =====================================================
         // DISCONNECT
