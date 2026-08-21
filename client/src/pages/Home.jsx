@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { gamesList } from '../data/gamesList';
 import GameCard from '../components/GameCard';
 import socket from '../socket/socket';
+import PlayerDisconnectedModal from '../components/PlayerDisconnectedModal';
 
 const Home = () => {
 
@@ -11,6 +12,7 @@ const Home = () => {
   const [invitation, setInvitation] = useState(null);
   const [sentInvitation, setSentInvitation] = useState(null);
   const [declinedInvitation, setDeclinedInvitation] = useState(null);
+  const [disconnectedPlayer, setDisconnectedPlayer] = useState(null);
 
   const roomId = sessionStorage.getItem("roomId");
 
@@ -115,6 +117,115 @@ const Home = () => {
     };
 
   }, [navigate]);
+
+  useEffect(() => {
+
+    const handlePlayerDisconnected = (data) => {
+
+      console.log(
+        "PLAYER DISCONNECTED EVENT RECEIVED:",
+        data
+      );
+
+      setDisconnectedPlayer(data);
+    };
+
+    socket.on(
+      "playerDisconnected",
+      handlePlayerDisconnected
+    );
+
+    return () => {
+
+      socket.off(
+        "playerDisconnected",
+        handlePlayerDisconnected
+      );
+
+    };
+
+  }, []);
+
+  // useEffect(() => {
+
+  //   const handlePlayerDisconnected = (data) => {
+
+  //     console.log(
+  //       "Other player disconnected:",
+  //       data
+  //     );
+
+  //     setDisconnectedPlayer(data);
+
+  //   };
+
+
+  //   const handlePlayerReconnected = (data) => {
+
+  //     console.log(
+  //       "Player reconnected:",
+  //       data
+  //     );
+
+  //     setDisconnectedPlayer(null);
+
+  //   };
+
+
+  //   const handlePlayerLeftRoom = (data) => {
+
+  //     console.log(
+  //       "Player did not reconnect:",
+  //       data
+  //     );
+
+  //     setDisconnectedPlayer(null);
+
+  //     // Clear current room information
+  //     sessionStorage.removeItem("roomId");
+  //     sessionStorage.removeItem("playerNumber");
+
+  //     navigate("/rooms");
+
+  //   };
+
+
+  //   socket.on(
+  //     "playerDisconnected",
+  //     handlePlayerDisconnected
+  //   );
+
+  //   socket.on(
+  //     "playerReconnected",
+  //     handlePlayerReconnected
+  //   );
+
+  //   socket.on(
+  //     "playerLeftRoom",
+  //     handlePlayerLeftRoom
+  //   );
+
+
+  //   return () => {
+
+  //     socket.off(
+  //       "playerDisconnected",
+  //       handlePlayerDisconnected
+  //     );
+
+  //     socket.off(
+  //       "playerReconnected",
+  //       handlePlayerReconnected
+  //     );
+
+  //     socket.off(
+  //       "playerLeftRoom",
+  //       handlePlayerLeftRoom
+  //     );
+
+  //   };
+
+  // }, [navigate]);
 
 
   // ==========================================
@@ -368,6 +479,19 @@ const Home = () => {
           </div>
 
         </div>
+
+      )}
+
+      {disconnectedPlayer && (
+
+        <PlayerDisconnectedModal
+          playerName={
+            disconnectedPlayer.playerName
+          }
+          seconds={
+            disconnectedPlayer.seconds
+          }
+        />
 
       )}
 
