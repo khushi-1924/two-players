@@ -1,133 +1,199 @@
 import { useEffect } from "react";
+
 import { useNavigate } from "react-router-dom";
+
 import socket from "../socket/socket";
 
+
 const gameRoutes = {
+
   ticTacToe: "/game/tic-tac-toe",
+
   connectFour: "/game/connect-four",
+
   rps: "/game/rps",
+
   poisonHearts: "/game/poison-hearts",
+
   guessTheNumber: "/game/guess-the-number"
+
 };
 
+
 const useRoomReconnection = () => {
+
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    const roomId = sessionStorage.getItem("roomId");
 
-    const savedPlayerNumber = sessionStorage.getItem(
-      "playerNumber"
-    );
+    const roomId =
+      sessionStorage.getItem("roomId");
 
-    // No active room
-    if (!roomId || !savedPlayerNumber) {
+
+    const savedPlayerNumber =
+      sessionStorage.getItem(
+        "playerNumber"
+      );
+
+
+    // ==========================================
+    // NO ACTIVE ROOM
+    // ==========================================
+
+    if (
+      !roomId ||
+      !savedPlayerNumber
+    ) {
+
       return;
+
     }
 
-    const playerNumber = Number(savedPlayerNumber);
+
+    const playerNumber =
+      Number(savedPlayerNumber);
+
 
     // ==========================================
     // REJOIN ROOM
     // ==========================================
 
     const handleConnect = () => {
+
       console.log(
         "Socket connected. Trying to rejoin room..."
       );
 
-      socket.emit("rejoinRoom", {
-        roomId,
-        playerNumber
-      });
+
+      socket.emit(
+        "rejoinRoom",
+        {
+          roomId,
+          playerNumber
+        }
+      );
+
     };
+
 
     // ==========================================
     // ROOM REJOINED
     // ==========================================
 
     const handleRoomRejoined = (data) => {
+
       console.log(
         "Successfully rejoined room:",
         data
       );
 
-      // Restore player number
+
+      // ------------------------------------------
+      // RESTORE PLAYER NUMBER
+      // ------------------------------------------
+
       sessionStorage.setItem(
         "playerNumber",
         data.playerNumber
       );
 
-      // If there is a game running
+
+      // ------------------------------------------
+      // IF THERE IS AN ACTIVE GAME
+      // ------------------------------------------
+
       if (data.currentGame) {
-        const gameName =
-          data.currentGame.name;
 
-        console.log(
-          "Restoring game:",
-          gameName
-        );
+        // ==========================================
+        // RESTORE GAME ONLY IF USER DID NOT
+        // INTENTIONALLY GO BACK TO HOME
+        // ==========================================
 
-        // Save current game name
-        sessionStorage.setItem(
-          "currentGame",
-          gameName
-        );
+        const stayOnHome =
+          sessionStorage.getItem("stayOnHome");
 
-        // Save complete state temporarily
-        sessionStorage.setItem(
-          "rejoinedGameState",
-          JSON.stringify({
-            currentGame:
-              data.currentGame,
 
-            scores:
-              data.scores
-          })
-        );
+        if (
+          data.currentGame &&
+          stayOnHome !== "true"
+        ) {
 
-        const gameRoute =
-          gameRoutes[gameName];
+          const gameName =
+            data.currentGame.name;
 
-        if (gameRoute) {
+
           console.log(
-            "Redirecting to:",
-            gameRoute
+            "Restoring game:",
+            gameName
           );
 
-          navigate(
-            gameRoute,
-            {
-              replace: true
-            }
+
+          sessionStorage.setItem(
+            "currentGame",
+            gameName
           );
+
+
+          const gameRoute =
+            gameRoutes[gameName];
+
+
+          if (gameRoute) {
+
+            console.log(
+              "Redirecting to:",
+              gameRoute
+            );
+
+
+            navigate(
+              gameRoute,
+              {
+                replace: true
+              }
+            );
+
+          }
+
         }
+
       }
+
     };
+
 
     // ==========================================
     // REJOIN FAILED
     // ==========================================
 
     const handleRejoinFailed = (data) => {
+
       console.log(
         "Could not rejoin room:",
         data.message
       );
 
-      sessionStorage.removeItem("roomId");
+
+      sessionStorage.removeItem(
+        "roomId"
+      );
+
 
       sessionStorage.removeItem(
         "playerNumber"
       );
 
+
       sessionStorage.removeItem(
         "currentGame"
       );
 
+
       sessionStorage.removeItem(
         "rejoinedGameState"
       );
+
 
       navigate(
         "/",
@@ -135,7 +201,9 @@ const useRoomReconnection = () => {
           replace: true
         }
       );
+
     };
+
 
     // ==========================================
     // SOCKET LISTENERS
@@ -146,43 +214,59 @@ const useRoomReconnection = () => {
       handleRoomRejoined
     );
 
+
     socket.on(
       "rejoinFailed",
       handleRejoinFailed
     );
 
-    // If already connected, immediately rejoin
+
+    // ==========================================
+    // REJOIN WHEN SOCKET CONNECTS
+    // ==========================================
+
     if (socket.connected) {
+
       handleConnect();
+
     } else {
+
       socket.once(
         "connect",
         handleConnect
       );
+
     }
+
 
     // ==========================================
     // CLEANUP
     // ==========================================
 
     return () => {
+
       socket.off(
         "roomRejoined",
         handleRoomRejoined
       );
+
 
       socket.off(
         "rejoinFailed",
         handleRejoinFailed
       );
 
+
       socket.off(
         "connect",
         handleConnect
       );
+
     };
 
   }, [navigate]);
+
 };
+
 
 export default useRoomReconnection;

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  useNavigate,
+  useLocation
+} from "react-router-dom";
 import { gamesList } from '../data/gamesList';
 import GameCard from '../components/GameCard';
 import socket from '../socket/socket';
@@ -8,11 +11,18 @@ import PlayerDisconnectedModal from '../components/PlayerDisconnectedModal';
 const Home = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
+
 
   const [invitation, setInvitation] = useState(null);
   const [sentInvitation, setSentInvitation] = useState(null);
   const [declinedInvitation, setDeclinedInvitation] = useState(null);
   const [disconnectedPlayer, setDisconnectedPlayer] = useState(null);
+
+  const [gameLeftNotification, setGameLeftNotification] =
+    useState(
+      location.state?.gameLeftBy || null
+    );
 
   const roomId = sessionStorage.getItem("roomId");
 
@@ -37,6 +47,10 @@ const Home = () => {
     // ==========================================
 
     const handleInvitationAccepted = (data) => {
+
+      sessionStorage.removeItem(
+        "stayOnHome"
+      );
 
       console.log("Invitation accepted:", data);
 
@@ -145,87 +159,6 @@ const Home = () => {
     };
 
   }, []);
-
-  // useEffect(() => {
-
-  //   const handlePlayerDisconnected = (data) => {
-
-  //     console.log(
-  //       "Other player disconnected:",
-  //       data
-  //     );
-
-  //     setDisconnectedPlayer(data);
-
-  //   };
-
-
-  //   const handlePlayerReconnected = (data) => {
-
-  //     console.log(
-  //       "Player reconnected:",
-  //       data
-  //     );
-
-  //     setDisconnectedPlayer(null);
-
-  //   };
-
-
-  //   const handlePlayerLeftRoom = (data) => {
-
-  //     console.log(
-  //       "Player did not reconnect:",
-  //       data
-  //     );
-
-  //     setDisconnectedPlayer(null);
-
-  //     // Clear current room information
-  //     sessionStorage.removeItem("roomId");
-  //     sessionStorage.removeItem("playerNumber");
-
-  //     navigate("/rooms");
-
-  //   };
-
-
-  //   socket.on(
-  //     "playerDisconnected",
-  //     handlePlayerDisconnected
-  //   );
-
-  //   socket.on(
-  //     "playerReconnected",
-  //     handlePlayerReconnected
-  //   );
-
-  //   socket.on(
-  //     "playerLeftRoom",
-  //     handlePlayerLeftRoom
-  //   );
-
-
-  //   return () => {
-
-  //     socket.off(
-  //       "playerDisconnected",
-  //       handlePlayerDisconnected
-  //     );
-
-  //     socket.off(
-  //       "playerReconnected",
-  //       handlePlayerReconnected
-  //     );
-
-  //     socket.off(
-  //       "playerLeftRoom",
-  //       handlePlayerLeftRoom
-  //     );
-
-  //   };
-
-  // }, [navigate]);
 
 
   // ==========================================
@@ -492,6 +425,100 @@ const Home = () => {
             disconnectedPlayer.seconds
           }
         />
+
+      )}
+
+      {gameLeftNotification && (
+
+        <div className="
+    fixed
+    inset-0
+    z-50
+    flex
+    items-center
+    justify-center
+    bg-black/60
+    backdrop-blur-sm
+  ">
+
+          <div className="
+      w-[90%]
+      max-w-md
+      rounded-2xl
+      bg-[#0a0a2a]
+      border
+      border-blue-500
+      p-8
+      text-center
+    ">
+
+            <div className="text-5xl mb-4">
+
+              🎮
+
+            </div>
+
+
+            <h2 className="
+        text-2xl
+        font-bold
+        text-pink-300
+        mb-4
+      ">
+
+              Game Ended
+
+            </h2>
+
+
+            <p className="
+        text-white
+        text-lg
+        mb-8
+      ">
+
+              {gameLeftNotification ===
+                sessionStorage.getItem("playerName")
+                ? (
+                  <>
+                    You left the game.
+                  </>
+                )
+                : (
+                  <>
+                    {gameLeftNotification} left the game.
+                  </>
+                )}
+
+            </p>
+
+
+            <button
+
+              onClick={() =>
+                setGameLeftNotification(null)
+              }
+
+              className="
+          px-7
+          py-3
+          rounded-xl
+          bg-blue-500
+          text-white
+          font-semibold
+          hover:bg-blue-600
+          transition
+        "
+
+            >
+
+              Okay
+
+            </button>
+
+          </div>
+
+        </div>
 
       )}
 

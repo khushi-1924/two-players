@@ -2,19 +2,21 @@ import React, {
   useEffect,
   useState,
   useCallback
-} from 'react';
+} from "react";
 
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
-import Grid from './Grid';
+import Grid from "./Grid";
 
-import socket from '../../socket/socket';
+import socket from "../../socket/socket";
 
-import usePlayAgain from '../../hooks/usePlayAgain';
+import usePlayAgain from "../../hooks/usePlayAgain";
 
-import PlayAgainModal from '../../components/PlayAgain/PlayAgainModal';
+import PlayAgainModal from
+  "../../components/PlayAgain/PlayAgainModal";
 
-import PlayAgainNotification from '../../components/PlayAgain/PlayAgainNotification';
+import PlayAgainNotification from
+  "../../components/PlayAgain/PlayAgainNotification";
 
 
 const TicTacToe = () => {
@@ -23,107 +25,71 @@ const TicTacToe = () => {
   // GAME RESULT STATES
   // ==========================================
 
-  const [winner, setWinner] = useState(null);
+  const [winner, setWinner] =
+    useState(null);
 
-  const [winningCells, setWinningCells] = useState([]);
+  const [winningCells, setWinningCells] =
+    useState([]);
 
-  const [isDraw, setIsDraw] = useState(false);
+  const [isDraw, setIsDraw] =
+    useState(false);
 
 
   // ==========================================
   // OVERALL ROOM SCORES
   // ==========================================
 
-  const [scores, setScores] = useState({
-    1: 0,
-    2: 0
-  });
+  const [scores, setScores] =
+    useState({
+      1: 0,
+      2: 0
+    });
 
 
   // ==========================================
   // ROOM / PLAYER INFORMATION
   // ==========================================
 
-  const location = useLocation();
+  const location =
+    useLocation();
 
-  const { game } = location.state || {};
+  const { game } =
+    location.state || {};
 
-  const roomId = sessionStorage.getItem("roomId");
+  const roomId =
+    sessionStorage.getItem("roomId");
 
-  const playerNumber = Number(
-    sessionStorage.getItem("playerNumber")
-  );
+  const playerNumber =
+    Number(
+      sessionStorage.getItem(
+        "playerNumber"
+      )
+    );
 
 
   // ==========================================
   // BOARD STATE
   // ==========================================
 
-  const [board, setBoard] = useState(
-    Array(9).fill(null)
-  );
+  const [board, setBoard] =
+    useState(
+      Array(9).fill(null)
+    );
 
   const [currentPlayer, setCurrentPlayer] =
     useState(null);
 
 
   // ==========================================
-  // RESTART TIC TAC TOE
-  // Called by reusable Play Again system
-  // ==========================================
-
-  const handleGameRestarted = useCallback((data) => {
-
-    console.log(
-      "Tic Tac Toe restarted:",
-      data
-    );
-
-    setBoard(data.board);
-
-    setCurrentPlayer(
-      data.currentPlayer
-    );
-
-    setWinner(null);
-
-    setWinningCells([]);
-
-    setIsDraw(false);
-
-    setScores(
-      data.scores
-    );
-
-  }, []);
-
-
-  // ==========================================
-  // REUSABLE PLAY AGAIN HOOK
-  // ==========================================
-
-  const {
-    playAgainRequest,
-    playAgainDeclined,
-    waitingForResponse,
-    requestPlayAgain,
-    respondToPlayAgain,
-    closeDeclineNotification
-  } = usePlayAgain(
-    roomId,
-    handleGameRestarted
-  );
-
-
-  // ==========================================
-  // RESTORE GAME AFTER RECONNECTION
+  // RESTORE STATE IMMEDIATELY AFTER REJOIN
   // ==========================================
 
   useEffect(() => {
 
-    const savedGameState = sessionStorage.getItem(
-      "rejoinedGameState"
-    );
+    const savedGameState =
+      sessionStorage.getItem(
+        "rejoinedGameState"
+      );
 
     if (!savedGameState) {
       return;
@@ -131,24 +97,22 @@ const TicTacToe = () => {
 
     try {
 
-      const parsedData = JSON.parse(
-        savedGameState
-      );
+      const data =
+        JSON.parse(savedGameState);
 
       const restoredGame =
-        parsedData.currentGame;
+        data.currentGame;
 
-
-      // Make sure this state belongs to Tic Tac Toe
       if (
-        restoredGame?.name === "ticTacToe"
+        restoredGame &&
+        restoredGame.name ===
+          "ticTacToe"
       ) {
 
         console.log(
-          "Restoring Tic Tac Toe:",
+          "Restoring Tic Tac Toe from rejoin:",
           restoredGame
         );
-
 
         // Restore board
         setBoard(
@@ -156,26 +120,23 @@ const TicTacToe = () => {
           Array(9).fill(null)
         );
 
-
-        // Restore current turn
+        // Restore turn
         setCurrentPlayer(
           restoredGame.currentPlayer
         );
 
-
         // Restore scores
-        if (parsedData.scores) {
+        setScores(
+          data.scores || {
+            1: 0,
+            2: 0
+          }
+        );
 
-          setScores(
-            parsedData.scores
-          );
-
-        }
-
-
-        // Restore finished game state
+        // Restore finished game
         if (
-          restoredGame.status === "finished"
+          restoredGame.status ===
+          "finished"
         ) {
 
           setWinner(
@@ -197,31 +158,75 @@ const TicTacToe = () => {
           setWinningCells([]);
 
           setIsDraw(false);
-
         }
-
-
-        // Remove temporary state after restoring
-        sessionStorage.removeItem(
-          "rejoinedGameState"
-        );
 
       }
 
     } catch (error) {
 
       console.error(
-        "Error restoring Tic Tac Toe:",
+        "Error restoring game state:",
         error
-      );
-
-      sessionStorage.removeItem(
-        "rejoinedGameState"
       );
 
     }
 
+    // Remove temporary state
+    sessionStorage.removeItem(
+      "rejoinedGameState"
+    );
+
   }, []);
+
+
+  // ==========================================
+  // RESTART TIC TAC TOE
+  // ==========================================
+
+  const handleGameRestarted =
+    useCallback((data) => {
+
+      console.log(
+        "Tic Tac Toe restarted:",
+        data
+      );
+
+      setBoard(
+        data.board
+      );
+
+      setCurrentPlayer(
+        data.currentPlayer
+      );
+
+      setWinner(null);
+
+      setWinningCells([]);
+
+      setIsDraw(false);
+
+      setScores(
+        data.scores
+      );
+
+    }, []);
+
+
+  // ==========================================
+  // REUSABLE PLAY AGAIN HOOK
+  // ==========================================
+
+  const {
+    playAgainRequest,
+    playAgainDeclined,
+    waitingForResponse,
+    requestPlayAgain,
+    respondToPlayAgain,
+    closeDeclineNotification
+  } = usePlayAgain(
+    roomId,
+    handleGameRestarted
+  );
 
 
   // ==========================================
@@ -230,10 +235,13 @@ const TicTacToe = () => {
 
   const handleCellClick = (index) => {
 
-    socket.emit("makeMove", {
-      roomId,
-      index
-    });
+    socket.emit(
+      "makeMove",
+      {
+        roomId,
+        index
+      }
+    );
 
   };
 
@@ -244,24 +252,35 @@ const TicTacToe = () => {
 
   useEffect(() => {
 
+    // ========================================
+    // GAME STARTED / RESTORED
+    // ========================================
+
     const handleGameStarted = (data) => {
 
       console.log(
-        "Game started/restored:",
+        "Game state received:",
         data
       );
 
-      setBoard(data.board);
+      setBoard(
+        data.board
+      );
 
       setCurrentPlayer(
         data.currentPlayer
       );
 
-      if (data.scores) {
-        setScores(data.scores);
-      }
+      setScores(
+        data.scores || {
+          1: 0,
+          2: 0
+        }
+      );
 
-      if (data.status === "finished") {
+      if (
+        data.status === "finished"
+      ) {
 
         setWinner(
           data.winner || null
@@ -282,19 +301,37 @@ const TicTacToe = () => {
         setWinningCells([]);
 
         setIsDraw(false);
+
       }
+
     };
 
 
+    // ========================================
+    // BOARD UPDATED
+    // ========================================
+
     const handleBoardUpdated = (data) => {
 
-      setBoard(data.board);
+      console.log(
+        "Board updated:",
+        data
+      );
+
+      setBoard(
+        data.board
+      );
 
       setCurrentPlayer(
         data.currentPlayer
       );
+
     };
 
+
+    // ========================================
+    // GAME OVER
+    // ========================================
 
     const handleGameOver = (data) => {
 
@@ -303,9 +340,13 @@ const TicTacToe = () => {
         data
       );
 
-      setBoard(data.board);
+      setBoard(
+        data.board
+      );
 
-      setWinner(data.winner);
+      setWinner(
+        data.winner
+      );
 
       setWinningCells(
         data.winningCells || []
@@ -315,11 +356,18 @@ const TicTacToe = () => {
         data.draw || false
       );
 
-      setScores(data.scores);
+      setScores(
+        data.scores
+      );
 
       setCurrentPlayer(null);
+
     };
 
+
+    // ========================================
+    // REGISTER LISTENERS
+    // ========================================
 
     socket.on(
       "gameStarted",
@@ -337,71 +385,44 @@ const TicTacToe = () => {
     );
 
 
-    // Check whether the game state was already
-    // restored by the reconnection hook
+    // ========================================
+    // REQUEST CURRENT SERVER STATE
+    // ========================================
 
-    const rejoinedGameState =
-      sessionStorage.getItem(
-        "rejoinedGameState"
+    const startGame = () => {
+
+      console.log(
+        "Requesting Tic Tac Toe state..."
       );
 
-
-    // If NOT reconnecting, start normally
-    if (!rejoinedGameState) {
-
-      const startGame = () => {
-
-        console.log(
-          "Starting Tic Tac Toe..."
-        );
-
-        socket.emit("startGame", {
+      socket.emit(
+        "startGame",
+        {
           roomId,
           game: "ticTacToe"
-        });
-      };
+        }
+      );
+
+    };
 
 
-      if (socket.connected) {
+    if (socket.connected) {
 
-        startGame();
+      startGame();
 
-      } else {
+    } else {
 
-        socket.once(
-          "connect",
-          startGame
-        );
-      }
-
-
-      return () => {
-
-        socket.off(
-          "gameStarted",
-          handleGameStarted
-        );
-
-        socket.off(
-          "boardUpdated",
-          handleBoardUpdated
-        );
-
-        socket.off(
-          "gameOver",
-          handleGameOver
-        );
-
-        socket.off(
-          "connect",
-          startGame
-        );
-      };
+      socket.once(
+        "connect",
+        startGame
+      );
 
     }
 
 
-    // If reconnecting, don't emit startGame again
+    // ========================================
+    // CLEANUP
+    // ========================================
 
     return () => {
 
@@ -419,6 +440,12 @@ const TicTacToe = () => {
         "gameOver",
         handleGameOver
       );
+
+      socket.off(
+        "connect",
+        startGame
+      );
+
     };
 
   }, [roomId]);
@@ -433,12 +460,17 @@ const TicTacToe = () => {
     <div className="game-container">
 
       <h1 className="text-4xl my-4 text-pink-300">
-        {game?.name || 'Tic Tac Toe'}
+
+        {game?.name || "Tic Tac Toe"}
+
       </h1>
 
 
       <p className="mb-4 text-xl">
-        {game?.description}
+
+        {game?.description ||
+          "Classic 2-player strategy game."}
+
       </p>
 
 
@@ -454,26 +486,33 @@ const TicTacToe = () => {
           scores={scores}
           onCellClick={handleCellClick}
           onPlayAgain={requestPlayAgain}
-          waitingForResponse={waitingForResponse}
+          waitingForResponse={
+            waitingForResponse
+          }
         />
 
       </div>
 
 
-      {/* REUSABLE PLAY AGAIN MODAL */}
-
       <PlayAgainModal
         request={playAgainRequest}
-        gameName={game?.name || 'Tic Tac Toe'}
-        onRespond={respondToPlayAgain}
+        gameName={
+          game?.name ||
+          "Tic Tac Toe"
+        }
+        onRespond={
+          respondToPlayAgain
+        }
       />
 
 
-      {/* REUSABLE DECLINE NOTIFICATION */}
-
       <PlayAgainNotification
-        playerName={playAgainDeclined}
-        onClose={closeDeclineNotification}
+        playerName={
+          playAgainDeclined
+        }
+        onClose={
+          closeDeclineNotification
+        }
       />
 
     </div>
@@ -481,5 +520,6 @@ const TicTacToe = () => {
   );
 
 };
+
 
 export default TicTacToe;
