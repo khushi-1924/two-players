@@ -6,9 +6,9 @@ import reconnectionHandler from "./handlers/reconnectionHandler.js";
 
 import disconnectHandler from "./handlers/disconnectHandler.js";
 
-import gameLeaveHandler from "./handlers/gameLeaveHandler.js";
-
 import playAgainHandler from "./handlers/playAgainHandler.js";
+
+import gameHandler from "../handlers/gameHandler.js";
 
 import ticTacToeSocket from "./handlers/games/ticTacToe/ticTacToeSocket.js";
 
@@ -76,17 +76,17 @@ const gameSocket = (io) => {
 
 
             // ================================================
-            // LEAVE GAME
+            // COMMON GAME HANDLER
             // ================================================
 
-            gameLeaveHandler(
+            gameHandler(
                 io,
                 socket
             );
 
 
             // ================================================
-            // GAMES
+            // GAME-SPECIFIC SOCKETS
             // ================================================
 
             ticTacToeSocket(

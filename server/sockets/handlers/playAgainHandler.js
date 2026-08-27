@@ -1,48 +1,10 @@
 import { rooms } from "../roomStore.js";
 
-
-const restartTicTacToe = (room) => {
-
-    const previousStarter =
-        room.currentGame.startingPlayer || 1;
-
-
-    const nextStarter =
-        previousStarter === 1
-            ? 2
-            : 1;
-
-
-    room.currentGame = {
-
-        name: "ticTacToe",
-
-        board:
-            Array(9).fill(null),
-
-        currentPlayer:
-            nextStarter,
-
-        startingPlayer:
-            nextStarter,
-
-        status: "playing",
-
-        winner: null,
-
-        winningCells: [],
-
-        draw: false
-
-    };
-
-
-    return room.currentGame;
-
-};
+import gameRegistry from "../../games/gameRegistry.js";
 
 
 const playAgainHandler = (io, socket) => {
+
 
     // =====================================================
     // REQUEST PLAY AGAIN
@@ -60,8 +22,7 @@ const playAgainHandler = (io, socket) => {
                 socket.emit(
                     "gameError",
                     {
-                        message:
-                            "Room not found"
+                        message: "Room not found"
                     }
                 );
 
@@ -74,8 +35,7 @@ const playAgainHandler = (io, socket) => {
                 socket.emit(
                     "gameError",
                     {
-                        message:
-                            "No game found"
+                        message: "No game found"
                     }
                 );
 
@@ -161,14 +121,11 @@ const playAgainHandler = (io, socket) => {
 
 
             room.playAgainRequest = {
+
                 from:
                     player.playerNumber
+
             };
-
-
-            console.log(
-                `${player.name} requested Play Again`
-            );
 
 
             io.to(
@@ -197,6 +154,7 @@ const playAgainHandler = (io, socket) => {
         ({ roomId, accepted }) => {
 
             const room = rooms[roomId];
+
 
             if (!room) {
                 return;
@@ -239,9 +197,9 @@ const playAgainHandler = (io, socket) => {
                 );
 
 
-            // =================================================
+            // =============================================
             // DECLINED
-            // =================================================
+            // =============================================
 
             if (!accepted) {
 
@@ -266,36 +224,40 @@ const playAgainHandler = (io, socket) => {
             }
 
 
-            // =================================================
+            // =============================================
             // ACCEPTED
-            // =================================================
+            // =============================================
 
             const gameName =
                 room.currentGame.name;
 
 
-            let restartedGame;
+            const game =
+                gameRegistry[gameName];
 
 
-            if (
-                gameName === "ticTacToe"
-            ) {
-
-                restartedGame =
-                    restartTicTacToe(room);
-
-            } else {
+            if (!game) {
 
                 socket.emit(
                     "gameError",
                     {
                         message:
-                            "Restart not supported"
+                            "Game restart not supported"
                     }
                 );
 
                 return;
             }
+
+
+            const restartedGame =
+                game.restartGame(
+                    room.currentGame
+                );
+
+
+            room.currentGame =
+                restartedGame;
 
 
             room.playAgainRequest = null;
@@ -307,11 +269,8 @@ const playAgainHandler = (io, socket) => {
                     game:
                         restartedGame.name,
 
-                    board:
-                        restartedGame.board,
-
-                    currentPlayer:
-                        restartedGame.currentPlayer,
+                    gameState:
+                        restartedGame,
 
                     scores:
                         room.scores
@@ -322,5 +281,6 @@ const playAgainHandler = (io, socket) => {
     );
 
 };
+
 
 export default playAgainHandler;

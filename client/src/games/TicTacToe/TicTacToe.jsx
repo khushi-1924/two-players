@@ -21,18 +21,34 @@ import PlayAgainNotification from
 
 const TicTacToe = () => {
 
+  const location =
+    useLocation();
+
+  const {
+    game,
+    restoredGame,
+    scores: restoredScores
+  } =
+    location.state || {};
+
   // ==========================================
   // GAME RESULT STATES
   // ==========================================
 
   const [winner, setWinner] =
-    useState(null);
+    useState(
+      restoredGame?.winner || null
+    );
 
   const [winningCells, setWinningCells] =
-    useState([]);
+    useState(
+      restoredGame?.winningCells || []
+    );
 
   const [isDraw, setIsDraw] =
-    useState(false);
+    useState(
+      restoredGame?.draw || false
+    );
 
 
   // ==========================================
@@ -40,21 +56,17 @@ const TicTacToe = () => {
   // ==========================================
 
   const [scores, setScores] =
-    useState({
-      1: 0,
-      2: 0
-    });
+    useState(
+      restoredScores || {
+        1: 0,
+        2: 0
+      }
+    );
 
 
   // ==========================================
   // ROOM / PLAYER INFORMATION
   // ==========================================
-
-  const location =
-    useLocation();
-
-  const { game } =
-    location.state || {};
 
   const roomId =
     sessionStorage.getItem("roomId");
@@ -73,11 +85,16 @@ const TicTacToe = () => {
 
   const [board, setBoard] =
     useState(
+      restoredGame?.board ||
       Array(9).fill(null)
     );
 
+
   const [currentPlayer, setCurrentPlayer] =
-    useState(null);
+    useState(
+      restoredGame?.currentPlayer ||
+      null
+    );
 
 
   // ==========================================
@@ -106,7 +123,7 @@ const TicTacToe = () => {
       if (
         restoredGame &&
         restoredGame.name ===
-          "ticTacToe"
+        "ticTacToe"
       ) {
 
         console.log(
@@ -191,22 +208,51 @@ const TicTacToe = () => {
         data
       );
 
+
+      const gameState =
+        data.gameState;
+
+
+      if (!gameState) {
+
+        console.error(
+          "Restarted game state is missing"
+        );
+
+        return;
+      }
+
+
       setBoard(
-        data.board
+        gameState.board
       );
+
 
       setCurrentPlayer(
-        data.currentPlayer
+        gameState.currentPlayer
       );
 
-      setWinner(null);
 
-      setWinningCells([]);
+      setWinner(
+        gameState.winner || null
+      );
 
-      setIsDraw(false);
+
+      setWinningCells(
+        gameState.winningCells || []
+      );
+
+
+      setIsDraw(
+        gameState.draw || false
+      );
+
 
       setScores(
-        data.scores
+        data.scores || {
+          1: 0,
+          2: 0
+        }
       );
 
     }, []);
@@ -263,13 +309,25 @@ const TicTacToe = () => {
         data
       );
 
+
+      const gameState =
+        data.gameState;
+
+
+      if (!gameState) {
+        return;
+      }
+
+
       setBoard(
-        data.board
+        gameState.board
       );
 
+
       setCurrentPlayer(
-        data.currentPlayer
+        gameState.currentPlayer
       );
+
 
       setScores(
         data.scores || {
@@ -278,20 +336,21 @@ const TicTacToe = () => {
         }
       );
 
+
       if (
-        data.status === "finished"
+        gameState.status === "finished"
       ) {
 
         setWinner(
-          data.winner || null
+          gameState.winner || null
         );
 
         setWinningCells(
-          data.winningCells || []
+          gameState.winningCells || []
         );
 
         setIsDraw(
-          data.draw || false
+          gameState.draw || false
         );
 
       } else {

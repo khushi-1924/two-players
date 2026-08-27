@@ -89,9 +89,9 @@ const useRoomReconnection = () => {
       );
 
 
-      // ------------------------------------------
+      // ==========================================
       // RESTORE PLAYER NUMBER
-      // ------------------------------------------
+      // ==========================================
 
       sessionStorage.setItem(
         "playerNumber",
@@ -99,62 +99,77 @@ const useRoomReconnection = () => {
       );
 
 
-      // ------------------------------------------
-      // IF THERE IS AN ACTIVE GAME
-      // ------------------------------------------
+      // ==========================================
+      // CHECK IF PLAYER INTENTIONALLY LEFT A GAME
+      // ==========================================
+
+      const stayOnHome =
+        sessionStorage.getItem(
+          "stayOnHome"
+        );
+
+      if (stayOnHome === "true") {
+
+        console.log(
+          "Player intentionally left the game. Staying on Home."
+        );
+
+        sessionStorage.removeItem(
+          "stayOnHome"
+        );
+
+        sessionStorage.removeItem(
+          "currentGame"
+        );
+
+        navigate(
+          "/home",
+          {
+            replace: true
+          }
+        );
+
+        return;
+
+      }
+
+
+      // ==========================================
+      // RESTORE CURRENT GAME
+      // ==========================================
 
       if (data.currentGame) {
 
-        // ==========================================
-        // RESTORE GAME ONLY IF USER DID NOT
-        // INTENTIONALLY GO BACK TO HOME
-        // ==========================================
+        const gameName =
+          data.currentGame.name;
 
-        const stayOnHome =
-          sessionStorage.getItem("stayOnHome");
+        console.log(
+          "Restoring game:",
+          gameName
+        );
 
+        sessionStorage.setItem(
+          "currentGame",
+          gameName
+        );
 
-        if (
-          data.currentGame &&
-          stayOnHome !== "true"
-        ) {
+        const gameRoute =
+          gameRoutes[gameName];
 
-          const gameName =
-            data.currentGame.name;
+        if (gameRoute) {
 
-
-          console.log(
-            "Restoring game:",
-            gameName
-          );
-
-
-          sessionStorage.setItem(
-            "currentGame",
-            gameName
-          );
-
-
-          const gameRoute =
-            gameRoutes[gameName];
-
-
-          if (gameRoute) {
-
-            console.log(
-              "Redirecting to:",
-              gameRoute
-            );
-
-
-            navigate(
-              gameRoute,
-              {
-                replace: true
+          navigate(
+            gameRoute,
+            {
+              replace: true,
+              state: {
+                restoredGame:
+                  data.currentGame,
+                scores:
+                  data.scores
               }
-            );
-
-          }
+            }
+          );
 
         }
 

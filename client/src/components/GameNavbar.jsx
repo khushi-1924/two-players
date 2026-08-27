@@ -1,7 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 import socket from "../socket/socket";
 
 
 const GameNavbar = () => {
+
+  const navigate = useNavigate();
+
 
   const handleBackToGames = () => {
 
@@ -9,17 +14,44 @@ const GameNavbar = () => {
       sessionStorage.getItem("roomId");
 
 
-    if (!roomId) {
+    // ==========================================
+    // TELL SERVER PLAYER LEFT THE GAME
+    // ==========================================
 
-      return;
+    if (roomId) {
+
+      socket.emit(
+        "leaveGame",
+        {
+          roomId
+        }
+      );
 
     }
 
 
-    socket.emit(
-      "leaveGame",
+    // ==========================================
+    // PREVENT OLD GAME FROM BEING RESTORED
+    // ==========================================
+
+    sessionStorage.setItem(
+      "stayOnHome",
+      "true"
+    );
+
+    sessionStorage.removeItem(
+      "currentGame"
+    );
+
+
+    // ==========================================
+    // GO BACK TO GAMES IMMEDIATELY
+    // ==========================================
+
+    navigate(
+      "/home",
       {
-        roomId
+        replace: true
       }
     );
 
@@ -49,16 +81,12 @@ const GameNavbar = () => {
           text-pink-300
         "
       >
-
         🎮 Two Player Games
-
       </h1>
 
 
       <button
-
         onClick={handleBackToGames}
-
         className="
           px-5
           py-2
@@ -70,9 +98,7 @@ const GameNavbar = () => {
           transition
         "
       >
-
         ← Back to Games
-
       </button>
 
     </nav>
