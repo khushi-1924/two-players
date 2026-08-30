@@ -58,6 +58,19 @@ const gameHandler = (io, socket) => {
                 return;
             }
 
+            if (room.players.length !== 2) {
+
+                socket.emit(
+                    "gameError",
+                    {
+                        message:
+                            "Waiting for another player"
+                    }
+                );
+
+                return;
+            }
+
 
             // =============================================
             // CHECK IF GAME EXISTS IN REGISTRY
@@ -87,22 +100,45 @@ const gameHandler = (io, socket) => {
 
             if (room.currentGame) {
 
-                console.log(
-                    `Restoring ${room.currentGame.name} in room ${roomId}`
-                );
+                // =============================================
+                // SAME GAME → RESTORE IT
+                // =============================================
 
+                if (
+                    room.currentGame.name === game
+                ) {
+
+                    console.log(
+                        `Restoring ${game} in room ${roomId}`
+                    );
+
+                    socket.emit(
+                        "gameStarted",
+                        {
+                            game:
+                                room.currentGame.name,
+
+                            gameState:
+                                room.currentGame,
+
+                            scores:
+                                room.scores
+                        }
+                    );
+
+                    return;
+                }
+
+
+                // =============================================
+                // DIFFERENT GAME ALREADY ACTIVE
+                // =============================================
 
                 socket.emit(
-                    "gameStarted",
+                    "gameError",
                     {
-                        game:
-                            room.currentGame.name,
-
-                        gameState:
-                            room.currentGame,
-
-                        scores:
-                            room.scores
+                        message:
+                            `Another game (${room.currentGame.name}) is already active`
                     }
                 );
 
@@ -116,7 +152,6 @@ const gameHandler = (io, socket) => {
 
             room.currentGame =
                 selectedGame.createGame();
-
 
             console.log(
                 `${game} started in room ${roomId}`

@@ -1,11 +1,15 @@
 import React from "react";
+import PlayAgainButton from
+  "../../components/PlayAgain/PlayAgainButton";
 
 const RPSBoard = ({
   playerChoice,
   opponentChoice,
   result,
   scores,
-  onChoiceClick
+  onChoiceClick,
+  onPlayAgain,
+  waitingForResponse
 }) => {
 
   const choices = [
@@ -150,6 +154,18 @@ const RPSBoard = ({
         Opponent: {scores.opponent}
 
       </p>
+
+
+      {/* PLAY AGAIN */}
+
+      {result && (
+
+        <PlayAgainButton
+          onClick={onPlayAgain}
+          waitingForResponse={waitingForResponse}
+        />
+
+      )}
 
     </div>
 
