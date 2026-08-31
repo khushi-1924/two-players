@@ -4,8 +4,10 @@ import reconnectionHandler from "./handlers/reconnectionHandler.js";
 import disconnectHandler from "./handlers/disconnectHandler.js";
 import playAgainHandler from "./handlers/playAgainHandler.js";
 import gameHandler from "../handlers/gameHandler.js";
+import gameLeaveHandler from "./handlers/gameLeaveHandler.js";
 import ticTacToeSocket from "./handlers/games/ticTacToe/ticTacToeSocket.js";
 import rockPaperScissorsSocket from "./handlers/games/rockPaperScissors/rockPaperScissorsSocket.js";
+import connectFourSocket from "./handlers/games/connectFour/connectFourSocket.js";
 
 
 const gameSocket = (io) => {
@@ -69,6 +71,15 @@ const gameSocket = (io) => {
                 socket
             );
 
+            // ================================================
+            // LEAVE GAME
+            // ================================================
+
+            gameLeaveHandler(
+                io,
+                socket
+            );
+
 
             // ================================================
             // COMMON GAME HANDLER
@@ -90,6 +101,11 @@ const gameSocket = (io) => {
             );
 
             rockPaperScissorsSocket(
+                io,
+                socket
+            );
+
+            connectFourSocket(
                 io,
                 socket
             );

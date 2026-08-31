@@ -4,6 +4,9 @@ import restartTicTacToe from "./ticTacToe/restartGame.js";
 import createRPSGame from "./rockPaperScissors/createGame.js";
 import restartRPSGame from "./rockPaperScissors/restartGame.js";
 
+import createConnectFourGame from "./connectFour/createGame.js";
+import restartConnectFourGame from "./connectFour/restartGame.js";
+
 
 const gameRegistry = {
 
@@ -15,6 +18,11 @@ const gameRegistry = {
     rps: {
         createGame: createRPSGame,
         restartGame: restartRPSGame
+    },
+
+    connectFour: {
+        createGame: createConnectFourGame,
+        restartGame: restartConnectFourGame
     }
 
 };
