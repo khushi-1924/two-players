@@ -3,187 +3,186 @@
    ===================================================== */
 
 .game-board {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 20px 16px 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px 40px;
 }
-
 
 /* =====================================================
    HEART GRID
    ===================================================== */
 
 .heart-grid {
-    width: min(90vw, 620px);
+  width: min(90vw, 620px);
 
-    display: grid;
+  display: grid;
 
-    grid-template-columns:
-        repeat(6, 1fr);
+  grid-template-columns: repeat(6, 1fr);
 
-    gap: clamp(10px, 2vw, 20px);
+  gap: clamp(10px, 2vw, 20px);
 
-    padding: clamp(16px, 3vw, 28px);
+  padding: clamp(16px, 3vw, 28px);
 
-    background: #0a0a2a;
+  background: #0a0a2a;
 
-    border: 2px solid #3b82f6;
+  border: 2px solid #3b82f6;
 
-    border-radius: 16px;
+  border-radius: 16px;
 
-    box-shadow:
-        0 0 10px rgba(59, 130, 246, 0.35),
-        0 0 25px rgba(59, 130, 246, 0.15);
+  box-shadow:
+    0 0 10px rgba(59, 130, 246, 0.35),
+    0 0 25px rgba(59, 130, 246, 0.15);
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
-
 
 /* =====================================================
    HEART BUTTON
    ===================================================== */
 
 .heart {
-    width: 100%;
+  width: 100%;
 
-    aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1;
 
-    display: flex;
+  display: flex;
 
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 
-    background: transparent;
+  background: transparent;
 
-    border: none;
+  border: none;
 
-    padding: 0;
+  padding: 0;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transition:
-        transform 0.15s ease,
-        filter 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
 }
-
 
 /* =====================================================
    HEART ICON
    ===================================================== */
 
 .heart-icon {
-    width: clamp(30px, 7vw, 55px);
+  width: clamp(30px, 7vw, 55px);
 
-    height: clamp(30px, 7vw, 55px);
+  height: clamp(30px, 7vw, 55px);
 
-    transition:
-        transform 0.15s ease,
-        filter 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
 }
-
 
 /* =====================================================
    HOVER
    ===================================================== */
 
 .heart:hover .heart-icon {
-    transform: scale(1.12);
+  transform: scale(1.12);
 }
-
 
 /* =====================================================
    ACTIVE / CLICK
    ===================================================== */
 
 .heart:active .heart-icon {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
-
 
 /* =====================================================
    TABLET
    ===================================================== */
 
 @media (max-width: 768px) {
+  .game-board {
+    padding: 16px 10px 30px;
+  }
 
-    .game-board {
-        padding:
-            16px
-            10px
-            30px;
-    }
+  .heart-grid {
+    width: 94vw;
 
+    gap: 10px;
 
-    .heart-grid {
-        width: 94vw;
+    padding: 16px;
 
-        gap: 10px;
-
-        padding: 16px;
-
-        border-radius: 14px;
-    }
-
+    border-radius: 14px;
+  }
 }
-
 
 /* =====================================================
    MOBILE
    ===================================================== */
 
 @media (max-width: 480px) {
+  .game-board {
+    padding: 12px 6px 24px;
+  }
 
-    .game-board {
-        padding:
-            12px
-            6px
-            24px;
-    }
+  .heart-grid {
+    width: 96vw;
 
+    gap: 6px;
 
-    .heart-grid {
+    padding: 10px;
 
-        width: 96vw;
+    border-width: 1px;
 
-        gap: 6px;
+    border-radius: 12px;
+  }
 
-        padding: 10px;
+  .heart-icon {
+    width: clamp(25px, 10vw, 38px);
 
-        border-width: 1px;
-
-        border-radius: 12px;
-    }
-
-
-    .heart-icon {
-        width: clamp(25px, 10vw, 38px);
-
-        height: clamp(25px, 10vw, 38px);
-    }
-
+    height: clamp(25px, 10vw, 38px);
+  }
 }
-
 
 /* =====================================================
    VERY SMALL PHONES
    ===================================================== */
 
 @media (max-width: 360px) {
+  .heart-grid {
+    gap: 4px;
 
-    .heart-grid {
+    padding: 7px;
+  }
 
-        gap: 4px;
+  .heart-icon {
+    width: 25px;
 
-        padding: 7px;
-    }
+    height: 25px;
+  }
+}
 
+/* Player's own poison heart */
+.heart-poison {
+  position: relative;
+}
 
-    .heart-icon {
+.heart-poison::after {
+  content: "☠";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  color: black;
+  pointer-events: none;
+}
 
-        width: 25px;
+/* Hearts already selected during the game */
+.heart-selected {
+  opacity: 0.25;
+  cursor: not-allowed;
+  transform: scale(0.85);
+}
 
-        height: 25px;
-    }
-
+.heart-selected:hover {
+  transform: scale(0.85);
 }

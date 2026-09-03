@@ -72,9 +72,9 @@ const createPoisonHeartsGame = () => {
             shuffledColors[i],
             shuffledColors[j]
         ] = [
-            shuffledColors[j],
-            shuffledColors[i]
-        ];
+                shuffledColors[j],
+                shuffledColors[i]
+            ];
 
     }
 
@@ -103,28 +103,29 @@ const createPoisonHeartsGame = () => {
     // ==========================================
 
     return {
-
         name: "poisonHearts",
-
         board,
-
         phase: "poisonSelection",
 
+        // Each player secretly chooses one poison heart
         poisonChoices: {
             1: null,
             2: null
         },
 
+        // Hearts selected during the actual game
+        selectedHearts: [],
+
         currentPlayer: null,
-
         winner: null,
-
         loser: null,
 
+        // Used when all hearts are selected without anyone
+        // hitting the opponent's poison heart
+        draw: false,
+
         status: "playing",
-
         round: 1
-
     };
 
 };

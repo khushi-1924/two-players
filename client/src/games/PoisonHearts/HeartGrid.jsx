@@ -1,102 +1,81 @@
 import React from "react";
 import { TiHeart } from "react-icons/ti";
 
-
-// =====================================================
-// SAME HEART LAYOUT FOR BOTH PLAYERS
-// =====================================================
-
-const colours = [
-    "text-blue-400",
-    "text-pink-400",
-    "text-green-400",
-    "text-yellow-400",
-    "text-purple-400",
-    "text-red-400",
-    "text-cyan-400",
-    "text-orange-400",
-    "text-lime-400",
-    "text-teal-400",
-    "text-indigo-400",
-    "text-gray-400"
-];
-
-
-// 36 hearts = 6 x 6
-
-const heartColours = [
-    colours[0],
-    colours[1],
-    colours[2],
-    colours[3],
-    colours[4],
-    colours[5],
-
-    colours[6],
-    colours[7],
-    colours[8],
-    colours[9],
-    colours[10],
-    colours[11],
-
-    colours[1],
-    colours[5],
-    colours[0],
-    colours[8],
-    colours[3],
-    colours[6],
-
-    colours[9],
-    colours[2],
-    colours[7],
-    colours[4],
-    colours[11],
-    colours[5],
-
-    colours[6],
-    colours[1],
-    colours[10],
-    colours[3],
-    colours[0],
-    colours[8],
-
-    colours[4],
-    colours[7],
-    colours[5],
-    colours[9],
-    colours[2],
-    colours[11]
-];
-
-
-const HeartGrid = () => {
-
-    return (
-
-        <div className="heart-grid">
-
-            {heartColours.map(
-                (colour, index) => (
-
-                    <button
-                        key={index}
-                        className="heart"
-                    >
-
-                        <TiHeart
-                            className={`heart-icon ${colour}`}
-                        />
-
-                    </button>
-
-                )
-            )}
-
-        </div>
-
-    );
-
+const colorClasses = {
+  gray: "text-gray-400",
+  cyan: "text-cyan-400",
+  purple: "text-purple-400",
+  green: "text-green-400",
+  pink: "text-pink-400",
+  blue: "text-blue-400",
+  orange: "text-orange-400",
+  yellow: "text-yellow-400",
 };
 
+const HeartGrid = ({
+  board,
+  phase,
+  currentPlayer,
+  playerNumber,
+  myPoisonHeart,
+  selectedHearts,
+  onPoisonChoice,
+  onHeartSelect,
+}) => {
+  if (!board || board.length === 0) {
+    return null;
+  }
+
+  const handleClick = (heartId) => {
+    if (phase === "poisonSelection") {
+      if (myPoisonHeart !== null) return;
+
+      onPoisonChoice(heartId);
+      return;
+    }
+
+    if (phase === "playing") {
+      if (currentPlayer !== playerNumber) return;
+
+      onHeartSelect(heartId);
+    }
+  };
+
+  return (
+    <div className="heart-grid">
+      {board.flat().map((heart) => {
+        const isSelected =
+          heart.selected || selectedHearts.includes(heart.id);
+
+        const isMyPoison =
+          phase === "poisonSelection" &&
+          myPoisonHeart === heart.id;
+
+        const isDisabled =
+          phase === "finished" ||
+          isSelected ||
+          (phase === "poisonSelection" && myPoisonHeart !== null) ||
+          (phase === "playing" && currentPlayer !== playerNumber);
+
+        return (
+          <button
+            key={heart.id}
+            className={`heart ${
+              isSelected ? "heart-selected" : ""
+            } ${isMyPoison ? "heart-poison" : ""}`}
+            onClick={() => handleClick(heart.id)}
+            disabled={isDisabled}
+          >
+            <TiHeart
+              className={`heart-icon ${
+                colorClasses[heart.color] || "text-gray-400"
+              }`}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 export default HeartGrid;
