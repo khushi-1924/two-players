@@ -7,6 +7,9 @@ import restartRPSGame from "./rockPaperScissors/restartGame.js";
 import createConnectFourGame from "./connectFour/createGame.js";
 import restartConnectFourGame from "./connectFour/restartGame.js";
 
+import createPoisonHeartsGame from "./poisonHearts/createGame.js";
+import restartPoisonHearts from "./poisonHearts/restartGame.js";
+
 
 const gameRegistry = {
 
@@ -23,6 +26,11 @@ const gameRegistry = {
     connectFour: {
         createGame: createConnectFourGame,
         restartGame: restartConnectFourGame
+    },
+
+    poisonHearts: {
+        createGame: createPoisonHeartsGame,
+        restartGame: restartPoisonHearts
     }
 
 };

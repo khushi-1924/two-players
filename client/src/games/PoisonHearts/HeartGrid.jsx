@@ -1,30 +1,102 @@
-import React, { useEffect, useState } from 'react'
+import React from "react";
 import { TiHeart } from "react-icons/ti";
 
-const colours = ['text-blue-400', 'text-pink-400', 'text-green-400', 'text-yellow-400', 'text-purple-400', 'text-red-400', 'text-cyan-400', 'text-orange-400', 'text-lime-400', 'text-teal-400', 'text-indigo-400', 'text-gray-400'];
+
+// =====================================================
+// SAME HEART LAYOUT FOR BOTH PLAYERS
+// =====================================================
+
+const colours = [
+    "text-blue-400",
+    "text-pink-400",
+    "text-green-400",
+    "text-yellow-400",
+    "text-purple-400",
+    "text-red-400",
+    "text-cyan-400",
+    "text-orange-400",
+    "text-lime-400",
+    "text-teal-400",
+    "text-indigo-400",
+    "text-gray-400"
+];
+
+
+// 36 hearts = 6 x 6
+
+const heartColours = [
+    colours[0],
+    colours[1],
+    colours[2],
+    colours[3],
+    colours[4],
+    colours[5],
+
+    colours[6],
+    colours[7],
+    colours[8],
+    colours[9],
+    colours[10],
+    colours[11],
+
+    colours[1],
+    colours[5],
+    colours[0],
+    colours[8],
+    colours[3],
+    colours[6],
+
+    colours[9],
+    colours[2],
+    colours[7],
+    colours[4],
+    colours[11],
+    colours[5],
+
+    colours[6],
+    colours[1],
+    colours[10],
+    colours[3],
+    colours[0],
+    colours[8],
+
+    colours[4],
+    colours[7],
+    colours[5],
+    colours[9],
+    colours[2],
+    colours[11]
+];
+
 
 const HeartGrid = () => {
 
-  const [hearts, setHearts] = useState([]);
+    return (
 
-  useEffect(() => {
-    const generatedHearts = Array.from({ length: 25 }, () =>
-      colours[Math.floor(Math.random() * colours.length)]
+        <div className="heart-grid">
+
+            {heartColours.map(
+                (colour, index) => (
+
+                    <button
+                        key={index}
+                        className="heart"
+                    >
+
+                        <TiHeart
+                            className={`heart-icon ${colour}`}
+                        />
+
+                    </button>
+
+                )
+            )}
+
+        </div>
+
     );
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setHearts(generatedHearts);
-  }, []);
+};
 
-  return (
-    <div className="heart-grid">
-      {hearts.map((colour, i) => (
-        <div key={i} className="heart">
-          <TiHeart className={`heart-icon ${colour}`} />
-        </div>
-      ))}
-    </div>
-  )
-}
 
-export default HeartGrid
+export default HeartGrid;
