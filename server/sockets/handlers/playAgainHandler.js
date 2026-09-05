@@ -1,5 +1,5 @@
 import { rooms } from "../roomStore.js";
-
+import getPublicGameState from "../../games/getPublicGameState.js";
 import gameRegistry from "../../games/gameRegistry.js";
 
 
@@ -263,19 +263,39 @@ const playAgainHandler = (io, socket) => {
             room.playAgainRequest = null;
 
 
-            io.to(roomId).emit(
-                "gameRestarted",
-                {
-                    game:
-                        restartedGame.name,
+            room.players.forEach((roomPlayer) => {
 
-                    gameState:
-                        restartedGame,
-
-                    scores:
-                        room.scores
+                if (!roomPlayer.connected) {
+                    return;
                 }
-            );
+
+                const playerSocket =
+                    io.sockets.sockets.get(
+                        roomPlayer.socketId
+                    );
+
+                if (!playerSocket) {
+                    return;
+                }
+
+                playerSocket.emit(
+                    "gameRestarted",
+                    {
+                        game:
+                            restartedGame.name,
+
+                        gameState:
+                            getPublicGameState(
+                                restartedGame,
+                                roomPlayer.playerNumber
+                            ),
+
+                        scores:
+                            room.scores
+                    }
+                );
+
+            });
 
         }
     );

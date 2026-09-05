@@ -18,6 +18,12 @@ import PlayAgainModal from
 import PlayAgainNotification from
   "../../components/PlayAgain/PlayAgainNotification";
 
+import { gamesList } from "../../data/gamesList";
+
+import '../GameCommon.css';
+import "../../components/Instructions/Instructions.css";
+import Instructions from "../../components/Instructions/Instructions";
+
 
 const RockPaperScissors = () => {
 
@@ -26,6 +32,10 @@ const RockPaperScissors = () => {
   const {
     game
   } = location.state || {};
+
+  const gameInfo = gamesList.find(
+    (item) => item.gameId === "rockPaperScissors"
+  );
 
 
   // ==========================================
@@ -96,7 +106,7 @@ const RockPaperScissors = () => {
 
       setOpponentChoice(
         gameState.choices?.[
-          playerNumber === 1 ? 2 : 1
+        playerNumber === 1 ? 2 : 1
         ] || null
       );
 
@@ -151,7 +161,7 @@ const RockPaperScissors = () => {
 
         opponent:
           serverScores[
-            playerNumber === 1 ? 2 : 1
+          playerNumber === 1 ? 2 : 1
           ] || 0
 
       });
@@ -221,7 +231,7 @@ const RockPaperScissors = () => {
 
         opponent:
           serverScores[
-            playerNumber === 1 ? 2 : 1
+          playerNumber === 1 ? 2 : 1
           ] || 0
 
       });
@@ -282,7 +292,7 @@ const RockPaperScissors = () => {
 
         opponent:
           serverScores[
-            playerNumber === 1 ? 2 : 1
+          playerNumber === 1 ? 2 : 1
           ] || 0
 
       });
@@ -426,20 +436,24 @@ const RockPaperScissors = () => {
 
     <div className="game-container">
 
-      <h1 className="text-4xl my-4 text-pink-300">
+      <div className="game-header">
+        <div className="game-title-row">
 
-        {game?.name ||
-          "Rock Paper Scissors"}
+          <h1 className="game-title">
+            {gameInfo.name}
+          </h1>
 
-      </h1>
+          <Instructions
+            gameName={gameInfo.name}
+            instructions={gameInfo.instructions}
+          />
 
+        </div>
 
-      <p className="mb-4 text-xl">
-
-        {game?.description ||
-          "Quick reaction game."}
-
-      </p>
+        <p className="game-description">
+          {gameInfo.description}
+        </p>
+      </div>
 
 
       <div className="py-10">

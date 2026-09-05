@@ -3,6 +3,17 @@ import { useLocation } from "react-router-dom";
 
 import socket from "../../socket/socket";
 import HeartGrid from "./HeartGrid";
+
+import usePlayAgain from "../../hooks/usePlayAgain";
+import PlayAgainModal from "../../components/PlayAgain/PlayAgainModal";
+import PlayAgainNotification from "../../components/PlayAgain/PlayAgainNotification";
+
+import { gamesList } from "../../data/gamesList";
+
+import '../GameCommon.css';
+import "../../components/Instructions/Instructions.css";
+import Instructions from "../../components/Instructions/Instructions";
+
 import "./poisonhearts.css";
 
 const PoisonHearts = () => {
@@ -14,6 +25,10 @@ const PoisonHearts = () => {
     const location = useLocation();
 
     const { game } = location.state || {};
+
+    const gameInfo = gamesList.find(
+        (item) => item.gameId === "poisonHearts"
+    );
 
     const roomId =
         sessionStorage.getItem("roomId");
@@ -42,6 +57,9 @@ const PoisonHearts = () => {
     const [selectedHearts, setSelectedHearts] =
         useState([]);
 
+    const [explodingHeart, setExplodingHeart] =
+        useState(null);
+
     const [winner, setWinner] =
         useState(null);
 
@@ -59,6 +77,109 @@ const PoisonHearts = () => {
 
 
     // ==========================================
+    // RESTART GAME
+    // Called by reusable Play Again system
+    // ==========================================
+
+    const handleGameRestarted = useCallback((data) => {
+
+        console.log(
+            "Poison Hearts restarted:",
+            data
+        );
+
+        const gameState =
+            data.gameState;
+
+        if (!gameState) {
+            console.error(
+                "Restarted game state is missing"
+            );
+
+            return;
+        }
+
+        // New board
+        setBoard(
+            gameState.board || []
+        );
+
+        // New phase
+        setPhase(
+            gameState.phase ||
+            "poisonSelection"
+        );
+
+        // New current player
+        setCurrentPlayer(
+            gameState.currentPlayer ??
+            null
+        );
+
+        /*
+         * New round means both players need
+         * to choose a new poison heart.
+         *
+         * We intentionally reset this locally.
+         */
+        setMyPoisonHeart(null);
+
+        // Reset selected hearts
+        setSelectedHearts(
+            gameState.selectedHearts || []
+        );
+
+        // No exploding heart in a new round
+        setExplodingHeart(null);
+
+        // Reset result
+        setWinner(
+            gameState.winner ??
+            null
+        );
+
+        setLoser(
+            gameState.loser ??
+            null
+        );
+
+        setIsDraw(
+            gameState.draw ||
+            false
+        );
+
+        /*
+         * Scores should NOT reset when playing again.
+         * They belong to the room/match.
+         */
+        setScores(
+            data.scores || {
+                1: 0,
+                2: 0
+            }
+        );
+
+    }, []);
+
+
+    // ==========================================
+    // REUSABLE PLAY AGAIN HOOK
+    // ==========================================
+
+    const {
+        playAgainRequest,
+        playAgainDeclined,
+        waitingForResponse,
+        requestPlayAgain,
+        respondToPlayAgain,
+        closeDeclineNotification
+    } = usePlayAgain(
+        roomId,
+        handleGameRestarted
+    );
+
+
+    // ==========================================
     // GAME STARTED / RESTORED
     // ==========================================
 
@@ -71,7 +192,6 @@ const PoisonHearts = () => {
             if (!gameState) {
                 return;
             }
-
 
             setBoard(
                 gameState.board || []
@@ -106,10 +226,17 @@ const PoisonHearts = () => {
                 false
             );
 
+            /*
+             * The server sends the player's own
+             * poison heart through public game state.
+             */
             setMyPoisonHeart(
                 gameState.myPoisonHeart ??
+                gameState.myPoisonChoice ??
                 null
             );
+
+            setExplodingHeart(null);
 
             setScores(
                 data.scores || {
@@ -149,7 +276,6 @@ const PoisonHearts = () => {
                 return;
             }
 
-
             setBoard(
                 gameState.board || []
             );
@@ -168,10 +294,32 @@ const PoisonHearts = () => {
                 []
             );
 
+            /*
+             * Each player receives their own
+             * poison choice only.
+             */
             setMyPoisonHeart(
                 gameState.myPoisonHeart ??
+                gameState.myPoisonChoice ??
                 null
             );
+
+            setWinner(
+                gameState.winner ||
+                null
+            );
+
+            setLoser(
+                gameState.loser ||
+                null
+            );
+
+            setIsDraw(
+                gameState.draw ||
+                false
+            );
+
+            setExplodingHeart(null);
 
             setScores(
                 data.scores || {
@@ -196,7 +344,6 @@ const PoisonHearts = () => {
             if (!gameState) {
                 return;
             }
-
 
             setBoard(
                 gameState.board || []
@@ -233,44 +380,32 @@ const PoisonHearts = () => {
                 return;
             }
 
-
             setBoard(
                 gameState.board || []
             );
 
             setPhase(
                 gameState.phase ||
-                "playing"
+                "finished"
             );
 
-            setCurrentPlayer(null);
-
-            setSelectedHearts(
-                gameState.selectedHearts ||
-                []
+            setCurrentPlayer(
+                gameState.currentPlayer
             );
 
             setWinner(
-                data.winner ??
-                gameState.winner ??
+                gameState.winner ||
                 null
             );
 
             setLoser(
-                data.loser ??
-                gameState.loser ??
+                gameState.loser ||
                 null
             );
 
             setIsDraw(
-                data.draw ||
                 gameState.draw ||
                 false
-            );
-
-            setMyPoisonHeart(
-                gameState.myPoisonHeart ??
-                null
             );
 
             setScores(
@@ -279,6 +414,19 @@ const PoisonHearts = () => {
                     2: 0
                 }
             );
+
+            // ==========================================
+            // TRIGGER EXPLOSION
+            // ==========================================
+
+            if (
+                data.explodedHeart !== undefined &&
+                data.explodedHeart !== null
+            ) {
+                setExplodingHeart(
+                    data.explodedHeart
+                );
+            }
 
         }, []);
 
@@ -367,7 +515,6 @@ const PoisonHearts = () => {
             return;
         }
 
-
         socket.emit(
             "startGame",
             {
@@ -399,7 +546,6 @@ const PoisonHearts = () => {
                 return;
             }
 
-
             socket.emit(
                 "poisonHeartChoice",
                 {
@@ -424,14 +570,12 @@ const PoisonHearts = () => {
                 return;
             }
 
-
             if (
                 currentPlayer !==
                 playerNumber
             ) {
                 return;
             }
-
 
             if (
                 selectedHearts.includes(
@@ -440,7 +584,6 @@ const PoisonHearts = () => {
             ) {
                 return;
             }
-
 
             socket.emit(
                 "selectPoisonHeart",
@@ -506,24 +649,177 @@ const PoisonHearts = () => {
 
 
     // ==========================================
+    // GAME PROMPTS
+    // ==========================================
+
+    const getGamePrompt = () => {
+
+        // ==========================================
+        // POISON SELECTION
+        // ==========================================
+
+        if (
+            phase === "poisonSelection"
+        ) {
+
+            if (
+                myPoisonHeart === null
+            ) {
+
+                return {
+                    title:
+                        "Choose Your Poison Heart",
+
+                    message:
+                        "Select one heart. This heart will be poisonous for your opponent. Your choice is secret.",
+
+                    type:
+                        "choose"
+                };
+            }
+
+            return {
+                title:
+                    "Poison Heart Locked!",
+
+                message:
+                    "Your poison heart has been chosen. Waiting for the other player to choose their heart...",
+
+                type:
+                    "waiting"
+            };
+        }
+
+
+        // ==========================================
+        // PLAYING
+        // ==========================================
+
+        if (
+            phase === "playing"
+        ) {
+
+            if (
+                currentPlayer ===
+                playerNumber
+            ) {
+
+                return {
+                    title:
+                        "Your Turn!",
+
+                    message:
+                        "Choose a heart carefully. It could be the poisoned heart!",
+
+                    type:
+                        "your-turn"
+                };
+            }
+
+            return {
+                title:
+                    "Opponent's Turn",
+
+                message:
+                    "Waiting for the other player to choose a heart...",
+
+                type:
+                    "opponent-turn"
+            };
+        }
+
+
+        // ==========================================
+        // GAME FINISHED
+        // ==========================================
+
+        if (
+            phase === "finished"
+        ) {
+
+            return {
+                title:
+                    "Game Over",
+
+                message:
+                    "The game has ended.",
+
+                type:
+                    "finished"
+            };
+        }
+
+
+        // ==========================================
+        // DEFAULT
+        // ==========================================
+
+        return {
+            title:
+                "Poison Hearts",
+
+            message:
+                "Get ready to play!",
+
+            type:
+                "default"
+        };
+    };
+
+
+    const prompt =
+        getGamePrompt();
+
+
+    // ==========================================
     // RENDER
     // ==========================================
 
     return (
         <div className="min-h-screen bg-[#05051f] text-white flex flex-col items-center px-4 py-8">
 
-            {/* TITLE */}
+            <div className="game-header">
+                <div className="game-title-row">
 
-            <h1 className="text-3xl sm:text-4xl font-bold text-pink-300 mb-2">
-                💜 Poison Hearts
-            </h1>
+                    <h1 className="game-title">
+                        {gameInfo.name}
+                    </h1>
+
+                    <Instructions
+                        gameName={gameInfo.name}
+                        instructions={gameInfo.instructions}
+                    />
+
+                </div>
+
+                <p className="game-description">
+                    {gameInfo.description}
+                </p>
+            </div>
+
+
+            {/* GAME PROMPT */}
+
+            <div
+                className={`poison-prompt ${prompt.type}`}
+            >
+                <h4 className="text-xl font-bold mb-2 text-center">
+                    {prompt.title}
+                </h4>
+
+                <p className="mb-2">
+                    {prompt.message}
+                </p>
+            </div>
 
 
             {/* ROUND STATUS */}
 
+            {/* 
             <p className="text-blue-200 mb-6 text-center">
                 {getStatusMessage()}
             </p>
+            */}
 
 
             {/* SCORE */}
@@ -532,13 +828,16 @@ const PoisonHearts = () => {
 
                 <div>
                     Player 1:
+
                     <span className="text-blue-300 ml-2">
                         {scores[1]}
                     </span>
                 </div>
 
+
                 <div>
                     Player 2:
+
                     <span className="text-pink-300 ml-2">
                         {scores[2]}
                     </span>
@@ -556,12 +855,27 @@ const PoisonHearts = () => {
                 playerNumber={playerNumber}
                 myPoisonHeart={myPoisonHeart}
                 selectedHearts={selectedHearts}
+                explodingHeart={explodingHeart}
+
                 onPoisonChoice={
                     handlePoisonChoice
                 }
+
                 onHeartSelect={
                     handleHeartSelect
                 }
+
+                // Play Again
+                onPlayAgain={
+                    requestPlayAgain
+                }
+
+                waitingForResponse={
+                    waitingForResponse
+                }
+
+                winner={winner}
+                isDraw={isDraw}
             />
 
 
@@ -584,6 +898,35 @@ const PoisonHearts = () => {
                     ❤️ Both players survived!
                 </div>
             )}
+
+
+            {/* PLAY AGAIN REQUEST */}
+
+            <PlayAgainModal
+                request={playAgainRequest}
+
+                gameName={
+                    game?.name ||
+                    "Poison Hearts"
+                }
+
+                onRespond={
+                    respondToPlayAgain
+                }
+            />
+
+
+            {/* PLAY AGAIN DECLINED */}
+
+            <PlayAgainNotification
+                playerName={
+                    playAgainDeclined
+                }
+
+                onClose={
+                    closeDeclineNotification
+                }
+            />
 
         </div>
     );

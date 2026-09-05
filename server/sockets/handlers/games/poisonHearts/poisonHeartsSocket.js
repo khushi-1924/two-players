@@ -146,7 +146,7 @@ const poisonHeartsSocket = (io, socket) => {
         if (heartId === opponentPoisonHeart) {
 
             game.phase = "finished";
-
+            game.status = "finished";
             game.winner = opponentNumber;
             game.loser = player.playerNumber;
             game.currentPlayer = null;
@@ -170,7 +170,8 @@ const poisonHeartsSocket = (io, socket) => {
                         game,
                         roomPlayer.playerNumber
                     ),
-                    scores: room.scores
+                    scores: room.scores,
+                    explodedHeart: heartId
                 });
             });
 
@@ -184,11 +185,11 @@ const poisonHeartsSocket = (io, socket) => {
         if (game.selectedHearts.length === 36) {
 
             game.phase = "finished";
-
-            game.winner = null;
-            game.loser = null;
+            game.status = "finished";
+            game.winner = opponentNumber;
+            game.loser = player.playerNumber;
             game.currentPlayer = null;
-            game.draw = true;
+            game.draw = false;
 
             room.players.forEach((roomPlayer) => {
 

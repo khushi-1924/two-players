@@ -186,3 +186,142 @@
 .heart-selected:hover {
   transform: scale(0.85);
 }
+
+
+/* ==========================================
+   POISON HEART EXPLOSION
+   ========================================== */
+
+.heart-exploding {
+    position: relative;
+    z-index: 10;
+}
+
+/* Heart disappears during the explosion */
+.heart-exploding .heart-icon {
+    animation: heartExplode 1s ease-out forwards;
+}
+
+/* Explosion symbol */
+.explosion-mark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1;
+    opacity: 0;
+
+    animation: explosionAppear 1s ease-out forwards;
+}
+
+/* Heart shrinks away */
+@keyframes heartExplode {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    25% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.6);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* Boom appears */
+@keyframes explosionAppear {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+
+    25% {
+        transform: translate(-50%, -50%) scale(0.7);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.3);
+        opacity: 1;
+    }
+
+    75% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* ==========================================
+   GAME PROMPT
+   ========================================== */
+
+.poison-prompt {
+    width: min(90vw, 620px);
+    margin: 10px auto 25px;
+    padding: 18px 24px;
+    text-align: center;
+
+    border-radius: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.5);
+
+    background: rgba(10, 10, 42, 0.9);
+
+    box-shadow:
+        0 0 15px rgba(59, 130, 246, 0.15);
+}
+
+.poison-prompt h2 {
+    margin: 0 0 8px;
+
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 700;
+}
+
+.poison-prompt p {
+    margin: 0;
+
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    line-height: 1.5;
+
+    color: #d1d5db;
+}
+
+
+/* ==========================================
+   PROMPT TYPES
+   ========================================== */
+
+.poison-prompt.choose h2 {
+    color: #f9a8d4;
+}
+
+.poison-prompt.waiting h2 {
+    color: #fcd34d;
+}
+
+.poison-prompt.your-turn h2 {
+    color: #86efac;
+}
+
+.poison-prompt.opponent-turn h2 {
+    color: #93c5fd;
+}
+
+.poison-prompt.finished h2 {
+    color: #fca5a5;
+}

@@ -1,0 +1,150 @@
+.instructions-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #3b82f6;
+  background: #111133;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s ease;
+}
+
+.instructions-button:hover {
+  background: #3b82f6;
+  transform: scale(1.08);
+}
+
+
+/* Dark background behind the modal */
+.instructions-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 20, 0.75);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 1000;
+}
+
+
+/* Main instructions box */
+.instructions-modal {
+  width: min(600px, 90%);
+  max-height: 80vh;
+
+  background: #08082a;
+  border: 1px solid #3b82f6;
+  border-radius: 14px;
+
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+
+  overflow-y: auto;
+}
+
+
+/* Header */
+.instructions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid #25255c;
+}
+
+.instructions-header h2 {
+  margin: 0;
+
+  color: #f58acb;
+  font-size: 26px;
+}
+
+
+/* Close button */
+.instructions-close {
+  border: none;
+  background: transparent;
+
+  color: #ffffff;
+  font-size: 30px;
+
+  cursor: pointer;
+
+  line-height: 1;
+}
+
+.instructions-close:hover {
+  color: #f58acb;
+}
+
+
+/* Instruction list */
+.instructions-list {
+  padding: 10px 24px 20px 24px;
+}
+
+
+/* Individual instruction */
+.instruction-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #1b1b4a;
+}
+
+.instruction-item:last-child {
+  border-bottom: none;
+}
+
+.instruction-number {
+  flex-shrink: 0;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  background: #3b82f6;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.instruction-text {
+  flex: 1;
+  text-align: left;
+}
+
+.instruction-text h3 {
+  margin: 2px 0 6px;
+
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.instruction-text p {
+  margin: 0;
+
+  color: #c7c7e8;
+  font-size: 15px;
+  line-height: 1.5;
+}

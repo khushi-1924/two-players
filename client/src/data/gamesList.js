@@ -1,4 +1,5 @@
 export const gamesList = [
+
   // TIC TAC TOE
   {
     id: 1,
@@ -12,7 +13,7 @@ export const gamesList = [
       {
         title: "Take turns",
         description:
-          "Two players take turns placing their symbol on the 3×3 board. Player 1 uses X and Player 2 uses O."
+          "Players take turns placing their symbol on the 3×3 board. Player 1 uses X and Player 2 uses O."
       },
       {
         title: "Make your move",
@@ -22,7 +23,7 @@ export const gamesList = [
       {
         title: "Get three in a row",
         description:
-          "Try to place three of your symbols in a horizontal row, vertical column, or diagonal."
+          "Try to place three of your symbols in a horizontal, vertical, or diagonal line."
       },
       {
         title: "Win the game",
@@ -37,6 +38,7 @@ export const gamesList = [
     ]
   },
 
+
   // CONNECT FOUR
   {
     id: 2,
@@ -50,17 +52,17 @@ export const gamesList = [
       {
         title: "Take turns",
         description:
-          "Two players take turns dropping their discs onto the board."
+          "Players take turns dropping their discs onto the board."
       },
       {
         title: "Choose a column",
         description:
-          "On your turn, click a column to drop your disc into it. The disc will fall to the lowest available position."
+          "On your turn, click a column to drop your disc. The disc falls to the lowest available position."
       },
       {
         title: "Plan your moves",
         description:
-          "Try to place your discs where they help you create a line while blocking your opponent."
+          "Try to create your own line while blocking your opponent from making one."
       },
       {
         title: "Connect four",
@@ -70,10 +72,11 @@ export const gamesList = [
       {
         title: "Win or draw",
         description:
-          "The first player to connect four wins. If the board fills up without either player connecting four, the game ends in a draw."
+          "The first player to connect four wins. If the board fills up without a winner, the game ends in a draw."
       }
     ]
   },
+
 
   // ROCK PAPER SCISSORS
   {
@@ -98,7 +101,7 @@ export const gamesList = [
       {
         title: "Wait for your opponent",
         description:
-          "Your choice is hidden from your opponent until both players have made their choice."
+          "Your choice stays hidden until both players have made their choice."
       },
       {
         title: "See the result",
@@ -113,10 +116,11 @@ export const gamesList = [
       {
         title: "Draw",
         description:
-          "If both players choose the same option, the round is a draw."
+          "If both players choose the same option, the round ends in a draw."
       }
     ]
   },
+
 
   // POISON HEARTS
   {
@@ -129,32 +133,48 @@ export const gamesList = [
 
     instructions: [
       {
+        title: "Choose your Poison Heart",
+        description:
+          "Both players secretly choose one heart on the board as their Poison Heart."
+      },
+      {
+        title: "Start the round",
+        description:
+          "Once both players have chosen their Poison Heart, the round begins."
+      },
+      {
         title: "Take turns",
         description:
-          "Two players take turns choosing a heart from the board."
+          "Players take turns choosing a heart from the board."
       },
       {
-        title: "Choose carefully",
+        title: "Avoid the Poison Heart",
         description:
-          "Each turn, select one of the available hearts."
+          "Try to avoid the Poison Heart chosen by your opponent."
       },
       {
-        title: "Avoid the poisoned heart",
+        title: "Hit the Poison Heart",
         description:
-          "One heart is secretly poisoned. Choosing it will cause you to lose the game."
+          "If you pick your opponent's Poison Heart, you lose the round."
       },
       {
-        title: "Stay alert",
+        title: "Draw",
         description:
-          "The poisoned heart is hidden, so choose carefully and try to avoid it."
+          "If all hearts are picked without anyone hitting a Poison Heart, the round ends in a draw."
       },
       {
-        title: "Win",
+        title: "Keep it secret",
         description:
-          "Avoid the poisoned heart and make your opponent pick it first to win."
+          "Your Poison Heart stays hidden from your opponent throughout the round."
+      },
+      {
+        title: "Play again",
+        description:
+          "After the round ends, choose Play Again to start a new round."
       }
     ]
   },
+
 
   // GUESS THE NUMBER
   {
@@ -162,14 +182,14 @@ export const gamesList = [
     gameId: "guessTheNumber",
     name: "Guess the Number",
     path: "/game/guess-the-number",
-    description: "Guess the Number I'm thinking of.",
+    description: "Guess the number I'm thinking of.",
     image: "/images/guess-the-number.png",
 
     instructions: [
       {
         title: "Choose a number",
         description:
-          "One player secretly chooses a number within the game's allowed range."
+          "One player secretly chooses a number within the allowed range."
       },
       {
         title: "Take turns guessing",
@@ -179,12 +199,12 @@ export const gamesList = [
       {
         title: "Use the hints",
         description:
-          "After each guess, use the feedback to figure out whether your next guess should be higher or lower."
+          "After each guess, use the feedback to determine whether your next guess should be higher or lower."
       },
       {
         title: "Narrow it down",
         description:
-          "Keep using the hints to reduce the possible range of numbers."
+          "Use the hints to reduce the possible range of numbers."
       },
       {
         title: "Guess correctly",
@@ -193,4 +213,5 @@ export const gamesList = [
       }
     ]
   }
+
 ];
