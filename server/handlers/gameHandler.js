@@ -2,6 +2,8 @@ import { rooms } from "../sockets/roomStore.js";
 
 import gameRegistry from "../games/gameRegistry.js";
 
+import getPublicGameState from "../games/getPublicGameState.js";
+
 
 const gameHandler = (io, socket) => {
 
@@ -112,6 +114,20 @@ const gameHandler = (io, socket) => {
                         `Restoring ${game} in room ${roomId}`
                     );
 
+                    // socket.emit(
+                    //     "gameStarted",
+                    //     {
+                    //         game:
+                    //             room.currentGame.name,
+
+                    //         gameState:
+                    //             room.currentGame,
+
+                    //         scores:
+                    //             room.scores
+                    //     }
+                    // );
+
                     socket.emit(
                         "gameStarted",
                         {
@@ -119,7 +135,10 @@ const gameHandler = (io, socket) => {
                                 room.currentGame.name,
 
                             gameState:
-                                room.currentGame,
+                                getPublicGameState(
+                                    room.currentGame,
+                                    player.playerNumber
+                                ),
 
                             scores:
                                 room.scores
@@ -162,18 +181,42 @@ const gameHandler = (io, socket) => {
             // SEND GAME TO BOTH PLAYERS
             // =============================================
 
-            io.to(roomId).emit(
-                "gameStarted",
-                {
-                    game,
+            // io.to(roomId).emit(
+            //     "gameStarted",
+            //     {
+            //         game,
 
-                    gameState:
-                        room.currentGame,
+            //         gameState:
+            //             room.currentGame,
 
-                    scores:
-                        room.scores
-                }
-            );
+            //         scores:
+            //             room.scores
+            //     }
+            // );
+
+            // =============================================
+            // SEND GAME TO BOTH PLAYERS
+            // =============================================
+
+            room.players.forEach((roomPlayer) => {
+
+                io.to(roomPlayer.socketId).emit(
+                    "gameStarted",
+                    {
+                        game,
+
+                        gameState:
+                            getPublicGameState(
+                                room.currentGame,
+                                roomPlayer.playerNumber
+                            ),
+
+                        scores:
+                            room.scores
+                    }
+                );
+
+            });
 
         }
     );

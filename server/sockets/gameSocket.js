@@ -8,6 +8,7 @@ import gameLeaveHandler from "./handlers/gameLeaveHandler.js";
 import ticTacToeSocket from "./handlers/games/ticTacToe/ticTacToeSocket.js";
 import rockPaperScissorsSocket from "./handlers/games/rockPaperScissors/rockPaperScissorsSocket.js";
 import connectFourSocket from "./handlers/games/connectFour/connectFourSocket.js";
+import poisonHeartsSocket from "./handlers/games/poisonHearts/poisonHeartsSocket.js";
 
 
 const gameSocket = (io) => {
@@ -106,6 +107,11 @@ const gameSocket = (io) => {
             );
 
             connectFourSocket(
+                io,
+                socket
+            );
+
+            poisonHeartsSocket(
                 io,
                 socket
             );

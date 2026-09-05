@@ -1,168 +1,220 @@
 import { useEffect, useState } from 'react';
+
 import socket from '../socket/socket';
 
 const usePlayAgain = (roomId, onGameRestarted) => {
 
-  const [playAgainRequest, setPlayAgainRequest] = useState(null);
+    const [playAgainRequest, setPlayAgainRequest] =
+        useState(null);
 
-  const [playAgainDeclined, setPlayAgainDeclined] =
-    useState(null);
+    const [playAgainDeclined, setPlayAgainDeclined] =
+        useState(null);
 
-  const [waitingForResponse, setWaitingForResponse] =
-    useState(false);
-
-
-  // ==========================================
-  // REQUEST PLAY AGAIN
-  // ==========================================
-
-  const requestPlayAgain = () => {
-
-    console.log("I clicked Play Again");
-
-    setWaitingForResponse(true);
-
-    socket.emit("playAgainRequest", {
-      roomId
-    });
-
-  };
+    const [waitingForResponse, setWaitingForResponse] =
+        useState(false);
 
 
-  // ==========================================
-  // ACCEPT / DECLINE REQUEST
-  // ==========================================
+    // ==========================================
+    // REQUEST PLAY AGAIN
+    // ==========================================
 
-  const respondToPlayAgain = (accepted) => {
+    const requestPlayAgain = () => {
 
-    console.log(
-      "Play Again response:",
-      accepted ? "Accepted" : "Declined"
-    );
+        console.log("I clicked Play Again");
 
-    socket.emit("playAgainResponse", {
-      roomId,
-      accepted
-    });
+        console.log("Room ID:", roomId);
+        console.log("Socket ID:", socket.id);
+        console.log("Socket connected:", socket.connected);
 
-    // Close the modal
-    setPlayAgainRequest(null);
+        setWaitingForResponse(true);
 
-  };
-
-
-  // ==========================================
-  // SOCKET LISTENERS
-  // ==========================================
-
-  useEffect(() => {
-
-    const handlePlayAgainRequested = (data) => {
-
-      console.log(
-        "Play Again request received:",
-        data
-      );
-
-      setPlayAgainRequest(data);
+        socket.emit("playAgainRequest", {
+            roomId
+        });
 
     };
 
 
-    const handlePlayAgainDeclined = (data) => {
+    // ==========================================
+    // ACCEPT / DECLINE REQUEST
+    // ==========================================
 
-      console.log(
-        `${data.playerName} declined Play Again`
-      );
+    const respondToPlayAgain = (accepted) => {
 
-      setWaitingForResponse(false);
+        console.log(
+            "Play Again response:",
+            accepted
+                ? "Accepted"
+                : "Declined"
+        );
 
-      setPlayAgainDeclined(data.playerName);
+        socket.emit("playAgainResponse", {
+            roomId,
+            accepted
+        });
 
-      setTimeout(() => {
-        setPlayAgainDeclined(null);
-      }, 3000);
-
-    };
-
-
-    const handleGameRestarted = (data) => {
-
-      console.log(
-        "Game restarted:",
-        data
-      );
-
-      // Stop waiting
-      setWaitingForResponse(false);
-
-      // Close any open request modal
-      setPlayAgainRequest(null);
-
-      // Let the current game decide
-      // how to reset itself
-      if (onGameRestarted) {
-        onGameRestarted(data);
-      }
+        // Close the modal
+        setPlayAgainRequest(null);
 
     };
 
 
-    socket.on(
-      "playAgainRequested",
-      handlePlayAgainRequested
-    );
+    // ==========================================
+    // SOCKET LISTENERS
+    // ==========================================
 
-    socket.on(
-      "playAgainDeclined",
-      handlePlayAgainDeclined
-    );
+    useEffect(() => {
 
-    socket.on(
-      "gameRestarted",
-      handleGameRestarted
-    );
+        const handlePlayAgainRequested = (data) => {
+
+            console.log(
+                "Play Again request received:",
+                data
+            );
+
+            setPlayAgainRequest(data);
+
+        };
 
 
-    return () => {
+        const handlePlayAgainDeclined = (data) => {
 
-      socket.off(
-        "playAgainRequested",
-        handlePlayAgainRequested
-      );
+            console.log(
+                `${data.playerName} declined Play Again`
+            );
 
-      socket.off(
-        "playAgainDeclined",
-        handlePlayAgainDeclined
-      );
+            setWaitingForResponse(false);
 
-      socket.off(
-        "gameRestarted",
-        handleGameRestarted
-      );
+            setPlayAgainDeclined(
+                data.playerName
+            );
+
+            setTimeout(() => {
+
+                setPlayAgainDeclined(null);
+
+            }, 3000);
+
+        };
+
+
+        const handleGameRestarted = (data) => {
+
+            console.log(
+                "Game restarted:",
+                data
+            );
+
+            // Stop waiting
+            setWaitingForResponse(false);
+
+            // Close any open request modal
+            setPlayAgainRequest(null);
+
+            // Let the current game decide
+            // how to reset itself
+            if (onGameRestarted) {
+
+                onGameRestarted(data);
+
+            }
+
+        };
+
+
+        // ==========================================
+        // GAME ERROR
+        // ==========================================
+
+        const handleGameError = (data) => {
+
+            console.error(
+                "Play Again error:",
+                data.message
+            );
+
+            // Important:
+            // Don't leave the button stuck
+            setWaitingForResponse(false);
+
+        };
+
+
+        socket.on(
+            "playAgainRequested",
+            handlePlayAgainRequested
+        );
+
+        socket.on(
+            "playAgainDeclined",
+            handlePlayAgainDeclined
+        );
+
+        socket.on(
+            "gameRestarted",
+            handleGameRestarted
+        );
+
+        socket.on(
+            "gameError",
+            handleGameError
+        );
+
+
+        return () => {
+
+            socket.off(
+                "playAgainRequested",
+                handlePlayAgainRequested
+            );
+
+            socket.off(
+                "playAgainDeclined",
+                handlePlayAgainDeclined
+            );
+
+            socket.off(
+                "gameRestarted",
+                handleGameRestarted
+            );
+
+            socket.off(
+                "gameError",
+                handleGameError
+            );
+
+        };
+
+    }, [roomId, onGameRestarted]);
+
+
+    return {
+
+        // States
+
+        playAgainRequest,
+
+        playAgainDeclined,
+
+        waitingForResponse,
+
+
+        // Functions
+
+        requestPlayAgain,
+
+        respondToPlayAgain,
+
+
+        // Optional close function
+
+        closeDeclineNotification: () => {
+
+            setPlayAgainDeclined(null);
+
+        }
 
     };
-
-  }, [roomId, onGameRestarted]);
-
-
-  return {
-
-    // States
-    playAgainRequest,
-    playAgainDeclined,
-    waitingForResponse,
-
-    // Functions
-    requestPlayAgain,
-    respondToPlayAgain,
-
-    // Optional close function
-    closeDeclineNotification: () => {
-      setPlayAgainDeclined(null);
-    }
-
-  };
 
 };
 

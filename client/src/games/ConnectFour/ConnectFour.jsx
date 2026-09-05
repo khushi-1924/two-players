@@ -23,6 +23,12 @@ import PlayAgainModal
 import PlayAgainNotification
   from "../../components/PlayAgain/PlayAgainNotification";
 
+import { gamesList } from "../../data/gamesList";
+
+import '../GameCommon.css';
+import "../../components/Instructions/Instructions.css";
+import Instructions from "../../components/Instructions/Instructions";
+
 
 const ConnectFour = () => {
 
@@ -40,6 +46,10 @@ const ConnectFour = () => {
     scores: restoredScores
   } =
     location.state || {};
+
+  const gameInfo = gamesList.find(
+    (item) => item.gameId === "connectFour"
+  );
 
 
   // ==========================================
@@ -403,24 +413,24 @@ const ConnectFour = () => {
 
     <div className="game-container">
 
-      <h1 className="text-4xl my-4 text-pink-300">
+      <div className="game-header">
+        <div className="game-title-row">
 
-        {
-          game?.name ||
-          "Connect Four"
-        }
+          <h1 className="game-title">
+            {gameInfo.name}
+          </h1>
 
-      </h1>
+          <Instructions
+            gameName={gameInfo.name}
+            instructions={gameInfo.instructions}
+          />
 
+        </div>
 
-      <p className="mb-4 text-xl">
-
-        {
-          game?.description ||
-          "Connect four of your pieces in a row."
-        }
-
-      </p>
+        <p className="game-description">
+          {gameInfo.description}
+        </p>
+      </div>
 
 
       <div className="py-10">

@@ -1,30 +1,108 @@
-import React, { useEffect, useState } from 'react'
+import React from "react";
 import { TiHeart } from "react-icons/ti";
+import PlayAgainButton from "../../components/PlayAgain/PlayAgainButton";
 
-const colours = ['text-blue-400', 'text-pink-400', 'text-green-400', 'text-yellow-400', 'text-purple-400', 'text-red-400', 'text-cyan-400', 'text-orange-400', 'text-lime-400', 'text-teal-400', 'text-indigo-400', 'text-gray-400'];
+const colorClasses = {
+  gray: "text-gray-400",
+  cyan: "text-cyan-400",
+  purple: "text-purple-400",
+  green: "text-green-400",
+  pink: "text-pink-400",
+  blue: "text-blue-400",
+  orange: "text-orange-400",
+  yellow: "text-yellow-400",
+};
 
-const HeartGrid = () => {
+const HeartGrid = ({
+  board,
+  phase,
+  currentPlayer,
+  playerNumber,
+  myPoisonHeart,
+  explodingHeart,
+  selectedHearts,
+  onPoisonChoice,
+  onHeartSelect,
+  onPlayAgain,
+  waitingForResponse,
+  winner,
+  isDraw,
+}) => {
+  if (!board || board.length === 0) {
+    return null;
+  }
 
-  const [hearts, setHearts] = useState([]);
+  const handleClick = (heartId) => {
+    // Poison selection phase
+    if (phase === "poisonSelection") {
+      // Player has already chosen their poison heart
+      if (myPoisonHeart !== null) return;
 
-  useEffect(() => {
-    const generatedHearts = Array.from({ length: 25 }, () =>
-      colours[Math.floor(Math.random() * colours.length)]
-    );
+      onPoisonChoice(heartId);
+      return;
+    }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setHearts(generatedHearts);
-  }, []);
+    // Normal playing phase
+    if (phase === "playing") {
+      // Not this player's turn
+      if (currentPlayer !== playerNumber) return;
+
+      onHeartSelect(heartId);
+    }
+  };
 
   return (
-    <div className="heart-grid">
-      {hearts.map((colour, i) => (
-        <div key={i} className="heart">
-          <TiHeart className={`heart-icon ${colour}`} />
-        </div>
-      ))}
-    </div>
-  )
-}
+    <div className="flex flex-col items-center gap-6">
+      {/* HEART GRID */}
+      <div className="heart-grid">
+        {board.flat().map((heart) => {
+          const isSelected =
+            heart.selected || selectedHearts.includes(heart.id);
 
-export default HeartGrid
+          const isMyPoison = myPoisonHeart === heart.id;
+
+          const isExploding = explodingHeart === heart.id;
+
+          const isDisabled =
+            phase === "finished" ||
+            isSelected ||
+            (phase === "poisonSelection" && myPoisonHeart !== null) ||
+            (phase === "playing" && currentPlayer !== playerNumber);
+
+          return (
+            <button
+              key={heart.id}
+              className={`heart ${
+                isSelected ? "heart-selected" : ""
+              } ${isMyPoison ? "heart-poison" : ""} ${
+                isExploding ? "heart-exploding" : ""
+              }`}
+              onClick={() => handleClick(heart.id)}
+              disabled={isDisabled}
+            >
+              {isExploding ? (
+                <span className="explosion-mark">💥</span>
+              ) : (
+                <TiHeart
+                  className={`heart-icon ${
+                    colorClasses[heart.color] || "text-gray-400"
+                  }`}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* PLAY AGAIN */}
+      {(winner !== null || isDraw) && (
+        <PlayAgainButton
+          onClick={onPlayAgain}
+          waitingForResponse={waitingForResponse}
+        />
+      )}
+    </div>
+  );
+};
+
+export default HeartGrid;

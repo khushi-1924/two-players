@@ -1,0 +1,25 @@
+.game-header {
+  text-align: center;
+  margin-top: 35px;
+  margin-bottom: 30px;
+}
+
+.game-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.game-title {
+  margin: 0;
+  color: #f58acb;
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.game-description {
+  margin: 10px 0 0;
+  color: #ffffff;
+  font-size: 18px;
+}

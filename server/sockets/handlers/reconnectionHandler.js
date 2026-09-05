@@ -3,6 +3,8 @@ import {
     disconnectTimers
 } from "../roomStore.js";
 
+import getPublicGameState from "../../games/getPublicGameState.js";
+
 const reconnectionHandler = (io, socket) => {
 
     socket.on(
@@ -121,7 +123,10 @@ const reconnectionHandler = (io, socket) => {
                         room.players,
 
                     currentGame:
-                        room.currentGame,
+                        getPublicGameState(
+                            room.currentGame,
+                            player.playerNumber
+                        ),
 
                     scores:
                         room.scores
