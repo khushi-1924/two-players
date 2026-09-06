@@ -10,6 +10,9 @@ import restartConnectFourGame from "./connectFour/restartGame.js";
 import createPoisonHeartsGame from "./poisonHearts/createGame.js";
 import restartPoisonHearts from "./poisonHearts/restartGame.js";
 
+import createGuessTheNumberGame from "./guessTheNumber/createGame.js";
+import restartGuessTheNumber from "./guessTheNumber/restartGame.js";
+
 
 const gameRegistry = {
 
@@ -31,6 +34,11 @@ const gameRegistry = {
     poisonHearts: {
         createGame: createPoisonHeartsGame,
         restartGame: restartPoisonHearts
+    },
+
+    guessTheNumber: {
+        createGame: createGuessTheNumberGame,
+        restartGame: restartGuessTheNumber
     }
 
 };

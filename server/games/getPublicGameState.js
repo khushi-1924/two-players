@@ -9,12 +9,36 @@ const getPublicGameState = (
 
 
     // ==========================================
-    // ALL NON-POISON-HEARTS GAMES
+    // GUESS THE NUMBER
     // ==========================================
 
-    if (game.name !== "poisonHearts") {
+    if (game.name === "guessTheNumber") {
 
-        return game;
+        const {
+            secretNumbers,
+            ...publicGame
+        } = game;
+
+
+        return {
+
+            ...publicGame,
+
+            mySecretNumber:
+                secretNumbers?.[playerNumber] ?? null,
+
+            opponentSubmitted:
+                secretNumbers
+                    ? Boolean(
+                        secretNumbers[
+                            playerNumber === 1
+                                ? 2
+                                : 1
+                        ]
+                    )
+                    : false
+
+        };
 
     }
 
@@ -22,23 +46,32 @@ const getPublicGameState = (
     // ==========================================
     // POISON HEARTS
     // ==========================================
-    // Never send both poison choices.
-    // A player may only receive their own choice.
 
-    const {
-        poisonChoices,
-        ...publicGame
-    } = game;
+    if (game.name === "poisonHearts") {
+
+        const {
+            poisonChoices,
+            ...publicGame
+        } = game;
 
 
-    return {
+        return {
 
-        ...publicGame,
+            ...publicGame,
 
-        myPoisonChoice:
-            poisonChoices?.[playerNumber] ?? null
+            myPoisonChoice:
+                poisonChoices?.[playerNumber] ?? null
 
-    };
+        };
+
+    }
+
+
+    // ==========================================
+    // ALL OTHER GAMES
+    // ==========================================
+
+    return game;
 
 };
 

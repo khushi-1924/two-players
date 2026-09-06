@@ -1,0 +1,941 @@
+.guess-game-page {
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    padding: 30px 20px 60px;
+    box-sizing: border-box;
+}
+
+
+.guess-game-container {
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.guess-game-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+
+.guess-game-title {
+    margin: 0;
+    color: #f58acb;
+    font-size: clamp(30px, 5vw, 42px);
+    font-weight: 600;
+}
+
+
+.guess-game-description {
+    margin: 10px auto 0;
+    color: #ffffff;
+    font-size: clamp(15px, 2vw, 18px);
+    max-width: 650px;
+}
+
+
+/* ==========================================
+   CARD
+========================================== */
+
+.guess-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    margin-bottom: 22px;
+
+    backdrop-filter: blur(8px);
+}
+
+
+.guess-card h2 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    text-align: center;
+
+    font-size: clamp(21px, 3vw, 27px);
+}
+
+
+.guess-card-description {
+    color: #cfcfcf;
+
+    text-align: center;
+
+    line-height: 1.6;
+
+    margin: 0 auto 25px;
+
+    max-width: 600px;
+}
+
+
+/* ==========================================
+   DIGIT OPTIONS
+========================================== */
+
+.digit-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+
+    max-width: 600px;
+
+    margin: 25px auto 0;
+}
+
+
+.digit-option {
+    border: 2px solid rgba(245, 138, 203, 0.3);
+
+    background: rgba(245, 138, 203, 0.08);
+
+    color: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 25px 15px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.digit-option:hover {
+    transform: translateY(-4px);
+
+    background: rgba(245, 138, 203, 0.18);
+
+    border-color: #f58acb;
+}
+
+
+.digit-option.selected {
+    background: rgba(245, 138, 203, 0.25);
+
+    border-color: #f58acb;
+}
+
+
+.digit-number {
+    font-size: 42px;
+
+    font-weight: 700;
+
+    color: #f58acb;
+}
+
+
+.digit-label {
+    margin-top: 4px;
+
+    font-size: 14px;
+
+    color: #d8d8d8;
+}
+
+
+/* ==========================================
+   NUMBER INPUT
+========================================== */
+
+.secret-number-input-area,
+.guess-input-area {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    width: 100%;
+}
+
+
+.number-input {
+    width: min(100%, 280px);
+
+    box-sizing: border-box;
+
+    padding: 14px 18px;
+
+    border-radius: 12px;
+
+    border: 2px solid rgba(245, 138, 203, 0.35);
+
+    background: rgba(0, 0, 0, 0.25);
+
+    color: #ffffff;
+
+    font-size: 26px;
+
+    font-weight: 600;
+
+    letter-spacing: 8px;
+
+    text-align: center;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.number-input:focus {
+    border-color: #f58acb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(245, 138, 203, 0.12);
+}
+
+
+.number-input::placeholder {
+    color: #777;
+
+    letter-spacing: 8px;
+}
+
+
+.number-input:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+.guess-primary-button {
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 14px 24px;
+
+    background: #f58acb;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.guess-primary-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    opacity: 0.9;
+}
+
+
+.guess-primary-button:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   RULES
+========================================== */
+
+.number-rules {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 12px 25px;
+
+    margin-top: 22px;
+}
+
+
+.number-rules p {
+    margin: 0;
+
+    color: #cfcfcf;
+
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   OPPONENT STATUS
+========================================== */
+
+.opponent-status {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 25px;
+
+    color: #bdbdbd;
+
+    font-size: 14px;
+
+    text-align: center;
+}
+
+
+.status-dot {
+    width: 9px;
+
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #777;
+
+    flex-shrink: 0;
+}
+
+
+.status-dot.ready {
+    background: #6ee7a8;
+
+    box-shadow:
+        0 0 8px
+        rgba(110, 231, 168, 0.7);
+}
+
+
+/* ==========================================
+   TURN CARD
+========================================== */
+
+.turn-card {
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 22px 25px;
+
+    margin-bottom: 22px;
+
+    border-radius: 18px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.12);
+
+    background: rgba(255, 255, 255, 0.06);
+}
+
+
+.turn-card.my-turn {
+    border-color:
+        rgba(245, 138, 203, 0.45);
+
+    background:
+        rgba(245, 138, 203, 0.09);
+}
+
+
+.turn-card.opponent-turn {
+    border-color:
+        rgba(255, 255, 255, 0.1);
+}
+
+
+.turn-icon {
+    width: 50px;
+
+    height: 50px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+    background:
+        rgba(245, 138, 203, 0.12);
+
+    flex-shrink: 0;
+}
+
+
+.turn-card h2 {
+    margin: 0 0 4px;
+
+    color: #ffffff;
+
+    font-size: 21px;
+}
+
+
+.turn-card p {
+    margin: 0;
+
+    color: #bdbdbd;
+
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   INPUT HINT
+========================================== */
+
+.input-hint {
+    text-align: center;
+
+    color: #999;
+
+    font-size: 13px;
+
+    margin: 15px 0 0;
+}
+
+
+/* ==========================================
+   HISTORY
+========================================== */
+
+.history-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+}
+
+
+.history-header h2 {
+    margin: 0;
+}
+
+
+.guess-count {
+    min-width: 25px;
+
+    height: 25px;
+
+    padding: 0 7px;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(245, 138, 203, 0.18);
+
+    color: #f58acb;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.guess-history {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.history-row {
+    min-width: 500px;
+
+    display: grid;
+
+    grid-template-columns:
+        1.2fr 1fr 1.3fr;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 13px 10px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    color: #dddddd;
+
+    font-size: 14px;
+}
+
+
+.history-heading {
+    color: #999;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+}
+
+
+.guess-value {
+    color: #f58acb;
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    letter-spacing: 3px;
+}
+
+
+.empty-history {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    color: #888;
+}
+
+
+.empty-history span {
+    font-size: 30px;
+
+    margin-bottom: 8px;
+}
+
+
+.empty-history p {
+    margin: 0;
+
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   WINNER
+========================================== */
+
+.winner-card {
+    padding: 35px 25px;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    margin-bottom: 22px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.12);
+
+    background: rgba(255, 255, 255, 0.06);
+}
+
+
+.winner-card.winner {
+    border-color:
+        rgba(110, 231, 168, 0.35);
+
+    background:
+        rgba(110, 231, 168, 0.07);
+}
+
+
+.winner-card.loser {
+    border-color:
+        rgba(245, 138, 203, 0.25);
+}
+
+
+.winner-icon {
+    font-size: 50px;
+
+    margin-bottom: 8px;
+}
+
+
+.winner-card h2 {
+    margin: 0 0 8px;
+
+    color: #ffffff;
+
+    font-size: 30px;
+}
+
+
+.winner-card > p {
+    margin: 0 auto 20px;
+
+    color: #bdbdbd;
+
+    line-height: 1.5;
+
+    max-width: 500px;
+}
+
+
+.final-result {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 25px;
+}
+
+
+.final-result span {
+    color: #888;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
+
+.final-result strong {
+    color: #f58acb;
+
+    font-size: 20px;
+}
+
+
+.final-history {
+    max-width: 650px;
+
+    margin: 0 auto;
+
+    padding-top: 20px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.final-history h3 {
+    color: #ffffff;
+
+    font-size: 18px;
+
+    margin: 0 0 15px;
+}
+
+
+/* ==========================================
+   ERROR / MESSAGE
+========================================== */
+
+.guess-error,
+.guess-message {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 16px;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    font-size: 14px;
+}
+
+
+.guess-error {
+    background: rgba(255, 90, 90, 0.1);
+
+    border: 1px solid
+        rgba(255, 90, 90, 0.25);
+
+    color: #ffaaaa;
+}
+
+
+.guess-message {
+    background: rgba(110, 231, 168, 0.08);
+
+    border: 1px solid
+        rgba(110, 231, 168, 0.25);
+
+    color: #9ff0c5;
+}
+
+
+.guess-status-text {
+    text-align: center;
+
+    color: #bbbbbb;
+
+    margin: 0;
+}
+
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media (max-width: 700px) {
+
+    .guess-game-page {
+        padding:
+            20px 14px 45px;
+    }
+
+
+    .guess-card {
+        padding: 22px 16px;
+
+        border-radius: 15px;
+    }
+
+
+    .digit-options {
+        gap: 10px;
+    }
+
+
+    .digit-option {
+        padding: 20px 10px;
+    }
+
+
+    .digit-number {
+        font-size: 35px;
+    }
+
+
+    .turn-card {
+        padding: 18px;
+
+        gap: 13px;
+    }
+
+
+    .turn-icon {
+        width: 43px;
+
+        height: 43px;
+
+        font-size: 21px;
+    }
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 500px) {
+
+    .guess-game-page {
+        padding:
+            15px 10px 35px;
+    }
+
+
+    .guess-game-header {
+        margin-bottom: 20px;
+    }
+
+
+    .guess-game-description {
+        font-size: 14px;
+
+        line-height: 1.5;
+    }
+
+
+    .digit-options {
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 8px;
+    }
+
+
+    .digit-option {
+        padding: 16px 5px;
+
+        border-radius: 12px;
+    }
+
+
+    .digit-number {
+        font-size: 30px;
+    }
+
+
+    .digit-label {
+        font-size: 12px;
+    }
+
+
+    .secret-number-input-area,
+    .guess-input-area {
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+
+    .number-input {
+        width: 100%;
+
+        font-size: 23px;
+
+        padding: 12px;
+
+        letter-spacing: 6px;
+    }
+
+
+    .guess-primary-button {
+        width: 100%;
+
+        padding: 13px;
+    }
+
+
+    .number-rules {
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 7px;
+    }
+
+
+    .opponent-status {
+        font-size: 13px;
+    }
+
+
+    .turn-card {
+        align-items: flex-start;
+
+        padding: 16px;
+    }
+
+
+    .turn-icon {
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 18px;
+    }
+
+
+    .turn-card h2 {
+        font-size: 18px;
+    }
+
+
+    .turn-card p {
+        font-size: 13px;
+
+        line-height: 1.4;
+    }
+
+
+    .history-row {
+        min-width: 450px;
+
+        padding: 11px 6px;
+
+        font-size: 13px;
+    }
+
+
+    .guess-value {
+        font-size: 16px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .winner-card {
+        padding: 28px 16px;
+    }
+
+
+    .winner-icon {
+        font-size: 42px;
+    }
+
+
+    .winner-card h2 {
+        font-size: 26px;
+    }
+
+}
