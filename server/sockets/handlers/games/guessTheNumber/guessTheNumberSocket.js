@@ -288,7 +288,7 @@ const guessTheNumberSocket = (
 
             if (
                 game.numbersSubmitted[
-                    playerNumber
+                playerNumber
                 ]
             ) {
 
@@ -568,7 +568,7 @@ const guessTheNumberSocket = (
 
             const opponentSecret =
                 game.secretNumbers[
-                    opponentNumber
+                opponentNumber
                 ];
 
 
@@ -629,7 +629,7 @@ const guessTheNumberSocket = (
                 ] =
                     (
                         room.scores[
-                            playerNumber
+                        playerNumber
                         ] || 0
                     ) + 1;
 
@@ -658,16 +658,21 @@ const guessTheNumberSocket = (
                         playerSocket.emit(
                             "gameOver",
                             {
-
                                 gameState:
                                     getPublicGameState(
                                         game,
                                         roomPlayer.playerNumber
                                     ),
 
+                                opponentSecretNumber:
+                                    game.secretNumbers[
+                                    roomPlayer.playerNumber === 1
+                                        ? 2
+                                        : 1
+                                    ],
+
                                 scores:
                                     room.scores
-
                             }
                         );
 

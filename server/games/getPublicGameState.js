@@ -31,13 +31,12 @@ const getPublicGameState = (
                 secretNumbers
                     ? Boolean(
                         secretNumbers[
-                            playerNumber === 1
-                                ? 2
-                                : 1
+                        playerNumber === 1
+                            ? 2
+                            : 1
                         ]
                     )
                     : false
-
         };
 
     }
