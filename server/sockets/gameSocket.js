@@ -5,10 +5,12 @@ import disconnectHandler from "./handlers/disconnectHandler.js";
 import playAgainHandler from "./handlers/playAgainHandler.js";
 import gameHandler from "../handlers/gameHandler.js";
 import gameLeaveHandler from "./handlers/gameLeaveHandler.js";
+
 import ticTacToeSocket from "./handlers/games/ticTacToe/ticTacToeSocket.js";
 import rockPaperScissorsSocket from "./handlers/games/rockPaperScissors/rockPaperScissorsSocket.js";
 import connectFourSocket from "./handlers/games/connectFour/connectFourSocket.js";
 import poisonHeartsSocket from "./handlers/games/poisonHearts/poisonHeartsSocket.js";
+import guessTheNumberSocket from "./handlers/games/guessTheNumber/guessTheNumberSocket.js";
 
 
 const gameSocket = (io) => {
@@ -112,6 +114,11 @@ const gameSocket = (io) => {
             );
 
             poisonHeartsSocket(
+                io,
+                socket
+            );
+
+            guessTheNumberSocket(
                 io,
                 socket
             );

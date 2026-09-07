@@ -182,34 +182,49 @@ export const gamesList = [
     gameId: "guessTheNumber",
     name: "Guess the Number",
     path: "/game/guess-the-number",
-    description: "Guess the number I'm thinking of.",
+    description: "Guess your opponent's secret number.",
     image: "/images/guess-the-number.png",
 
     instructions: [
       {
-        title: "Choose a number",
+        title: "Choose the number length",
         description:
-          "One player secretly chooses a number within the allowed range."
+          "Both players will play with either a 3-digit, 4-digit, or 5-digit number. Either player can choose the length, and the first valid choice is used."
+      },
+      {
+        title: "Choose your secret number",
+        description:
+          "Both players secretly choose a number with the selected number of digits. Your number must have no repeated digits and cannot start with 0."
+      },
+      {
+        title: "Keep your number secret",
+        description:
+          "Your secret number is hidden from your opponent. You must use the clues from their guesses to figure out your own strategy."
       },
       {
         title: "Take turns guessing",
         description:
-          "The other player tries to guess the secret number."
+          "Once both players have chosen their secret numbers, players take turns guessing their opponent's number."
       },
       {
-        title: "Use the hints",
+        title: "Read the feedback",
         description:
-          "After each guess, use the feedback to determine whether your next guess should be higher or lower."
+          "After each guess, you will see how many digits are correct and how many of those digits are in the correct position."
       },
       {
-        title: "Narrow it down",
+        title: "Use the clues",
         description:
-          "Use the hints to reduce the possible range of numbers."
+          "Use the feedback from each guess to work out which digits are in your opponent's number and where they belong."
       },
       {
-        title: "Guess correctly",
+        title: "Guess the number",
         description:
-          "The player who correctly guesses the secret number wins the round."
+          "When all digits and all positions are correct, you have successfully guessed your opponent's secret number."
+      },
+      {
+        title: "Win the game",
+        description:
+          "The first player to correctly guess their opponent's entire secret number wins the game."
       }
     ]
   }
