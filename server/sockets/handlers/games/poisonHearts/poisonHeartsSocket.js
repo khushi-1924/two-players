@@ -180,19 +180,19 @@ const poisonHeartsSocket = (io, socket) => {
 
 
         // -----------------------------------------
-        // ALL HEARTS HAVE BEEN SELECTED
+        // 34 HEARTS HAVE BEEN SELECTED → DRAW
         // -----------------------------------------
-        if (game.selectedHearts.length === 36) {
 
+        if (game.selectedHearts.length === 34) {
             game.phase = "finished";
             game.status = "finished";
-            game.winner = opponentNumber;
-            game.loser = player.playerNumber;
+
+            game.winner = null;
+            game.loser = null;
             game.currentPlayer = null;
-            game.draw = false;
+            game.draw = true;
 
             room.players.forEach((roomPlayer) => {
-
                 const playerSocket = io.sockets.sockets.get(
                     roomPlayer.socketId
                 );

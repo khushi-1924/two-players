@@ -5,24 +5,20 @@ import React, {
 } from "react";
 
 import { useLocation } from "react-router-dom";
-
 import Grid from "./Grid";
-
 import socket from "../../socket/socket";
-
 import usePlayAgain from "../../hooks/usePlayAgain";
-
 import PlayAgainModal from
   "../../components/PlayAgain/PlayAgainModal";
-
 import PlayAgainNotification from
   "../../components/PlayAgain/PlayAgainNotification";
 
 import { gamesList } from "../../data/gamesList";
-
 import '../GameCommon.css';
 import "../../components/Instructions/Instructions.css";
 import Instructions from "../../components/Instructions/Instructions";
+
+import usePlayerNames from "../../hooks/usePlayerNames";
 
 
 const TicTacToe = () => {
@@ -81,12 +77,12 @@ const TicTacToe = () => {
   const roomId =
     sessionStorage.getItem("roomId");
 
-  const playerNumber =
-    Number(
-      sessionStorage.getItem(
-        "playerNumber"
-      )
-    );
+  const {
+    playerNames,
+    // myName,
+    // opponentName,
+    playerNumber,
+  } = usePlayerNames();
 
 
   // ==========================================
@@ -554,15 +550,14 @@ const TicTacToe = () => {
           board={board}
           currentPlayer={currentPlayer}
           playerNumber={playerNumber}
+          playerNames={playerNames}
           winner={winner}
           winningCells={winningCells}
           isDraw={isDraw}
           scores={scores}
           onCellClick={handleCellClick}
           onPlayAgain={requestPlayAgain}
-          waitingForResponse={
-            waitingForResponse
-          }
+          waitingForResponse={waitingForResponse}
         />
 
       </div>

@@ -66,6 +66,17 @@ const RoomSelection = () => {
                 data.playerNumber
             );
 
+            const playerNames = {};
+
+            data.players.forEach((player) => {
+                playerNames[player.playerNumber] = player.name;
+            });
+
+            sessionStorage.setItem(
+                "playerNames",
+                JSON.stringify(playerNames)
+            );
+
             navigate("/home");
         };
 

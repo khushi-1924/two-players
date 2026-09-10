@@ -80,3 +80,25 @@ h1, h2, h3 {
 .animate-pop {
     animation: pop 0.2s ease-out;
 }
+
+/* CONNECT FOUR */
+@keyframes drop {
+  0% {
+    transform: translateY(-300px);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateY(10px);
+    opacity: 1;
+  }
+
+  80% {
+    transform: translateY(-4px);
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,14 +1,14 @@
-import React from 'react'
-import { PiCircleBold } from 'react-icons/pi'
-import { ImCross } from 'react-icons/im'
+import React from "react";
+import { PiCircleBold } from "react-icons/pi";
+import { ImCross } from "react-icons/im";
 
 const Cell = ({ value, onClick, isWinning }) => {
-
   return (
     <button
       onClick={onClick}
       className={`
-        w-32 h-32
+        w-[clamp(70px,25vw,128px)]
+        h-[clamp(70px,25vw,128px)]
         border
         text-4xl font-bold text-white
         flex items-center justify-center
@@ -30,21 +30,15 @@ const Cell = ({ value, onClick, isWinning }) => {
         }
       `}
     >
-
-      {value === 'X' && (
-        <ImCross
-          className='text-pink-400 text-5xl animate-pop'
-        />
+      {value === "X" && (
+        <ImCross className="text-pink-400 text-4xl sm:text-5xl animate-pop" />
       )}
 
-      {value === 'O' && (
-        <PiCircleBold
-          className='text-cyan-400 text-6xl animate-pop'
-        />
+      {value === "O" && (
+        <PiCircleBold className="text-cyan-400 text-5xl sm:text-6xl animate-pop" />
       )}
-
     </button>
-  )
-}
+  );
+};
 
-export default Cell
+export default Cell;

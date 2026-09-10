@@ -14,6 +14,8 @@ import '../GameCommon.css';
 import "../../components/Instructions/Instructions.css";
 import Instructions from "../../components/Instructions/Instructions";
 
+import usePlayerNames from "../../hooks/usePlayerNames";
+
 import "./poisonhearts.css";
 
 const PoisonHearts = () => {
@@ -33,10 +35,12 @@ const PoisonHearts = () => {
     const roomId =
         sessionStorage.getItem("roomId");
 
-    const playerNumber =
-        Number(
-            sessionStorage.getItem("playerNumber")
-        );
+    const {
+        playerNames,
+        // myName,
+        // opponentName,
+        playerNumber,
+    } = usePlayerNames();
 
 
     // ==========================================
@@ -601,174 +605,36 @@ const PoisonHearts = () => {
     // ==========================================
 
     const getStatusMessage = () => {
-
-        if (
-            winner !== null
-        ) {
-
-            if (
-                winner === playerNumber
-            ) {
+        // GAME OVER
+        if (winner !== null) {
+            if (winner === playerNumber) {
                 return "🎉 You won!";
             }
 
-            return "💔 You lost!";
+            return `💔 ${playerNames[winner] || "Opponent"} won!`;
         }
 
-
+        // DRAW
         if (isDraw) {
             return "❤️ Both players survived!";
         }
 
-
-        if (
-            phase ===
-            "poisonSelection"
-        ) {
-
-            if (
-                myPoisonHeart !== null
-            ) {
-                return "✅ Poison heart chosen — waiting for opponent...";
+        // POISON SELECTION
+        if (phase === "poisonSelection") {
+            if (myPoisonHeart !== null) {
+                return "⏳ Waiting for opponent to choose their poison heart...";
             }
 
             return "💜 Choose your poison heart";
         }
 
-
-        if (
-            currentPlayer ===
-            playerNumber
-        ) {
-            return "🎮 Your turn — choose a heart";
-        }
-
-
-        return "⏳ Waiting for opponent...";
-    };
-
-
-    // ==========================================
-    // GAME PROMPTS
-    // ==========================================
-
-    const getGamePrompt = () => {
-
-        // ==========================================
-        // POISON SELECTION
-        // ==========================================
-
-        if (
-            phase === "poisonSelection"
-        ) {
-
-            if (
-                myPoisonHeart === null
-            ) {
-
-                return {
-                    title:
-                        "Choose Your Poison Heart",
-
-                    message:
-                        "Select one heart. This heart will be poisonous for your opponent. Your choice is secret.",
-
-                    type:
-                        "choose"
-                };
-            }
-
-            return {
-                title:
-                    "Poison Heart Locked!",
-
-                message:
-                    "Your poison heart has been chosen. Waiting for the other player to choose their heart...",
-
-                type:
-                    "waiting"
-            };
-        }
-
-
-        // ==========================================
         // PLAYING
-        // ==========================================
-
-        if (
-            phase === "playing"
-        ) {
-
-            if (
-                currentPlayer ===
-                playerNumber
-            ) {
-
-                return {
-                    title:
-                        "Your Turn!",
-
-                    message:
-                        "Choose a heart carefully. It could be the poisoned heart!",
-
-                    type:
-                        "your-turn"
-                };
-            }
-
-            return {
-                title:
-                    "Opponent's Turn",
-
-                message:
-                    "Waiting for the other player to choose a heart...",
-
-                type:
-                    "opponent-turn"
-            };
+        if (currentPlayer === playerNumber) {
+            return "Your turn";
         }
 
-
-        // ==========================================
-        // GAME FINISHED
-        // ==========================================
-
-        if (
-            phase === "finished"
-        ) {
-
-            return {
-                title:
-                    "Game Over",
-
-                message:
-                    "The game has ended.",
-
-                type:
-                    "finished"
-            };
-        }
-
-
-        // ==========================================
-        // DEFAULT
-        // ==========================================
-
-        return {
-            title:
-                "Poison Hearts",
-
-            message:
-                "Get ready to play!",
-
-            type:
-                "default"
-        };
+        return "Opponent's turn...";
     };
-
-
-    const prompt =
-        getGamePrompt();
 
 
     // ==========================================
@@ -798,52 +664,27 @@ const PoisonHearts = () => {
             </div>
 
 
-            {/* GAME PROMPT */}
+            {/* POISON SELECTION PROMPT */}
 
-            <div
-                className={`poison-prompt ${prompt.type}`}
-            >
-                <h4 className="text-xl font-bold mb-2 text-center">
-                    {prompt.title}
-                </h4>
+            {phase === "poisonSelection" &&
+                myPoisonHeart === null && (
+                    <div className="poison-prompt choose">
+                        <h4 className="text-xl font-bold mb-2 text-center">
+                            Choose Your Poison Heart
+                        </h4>
 
-                <p className="mb-2">
-                    {prompt.message}
-                </p>
-            </div>
+                        <p className="mb-2">
+                            Select one heart. This heart will be poisonous
+                            for your opponent. Your choice is secret.
+                        </p>
+                    </div>
+                )}
 
+            {/* GAME STATUS */}
 
-            {/* ROUND STATUS */}
-
-            {/* 
-            <p className="text-blue-200 mb-6 text-center">
+            <p className="text-xl text-white text-center mb-6">
                 {getStatusMessage()}
             </p>
-            */}
-
-
-            {/* SCORE */}
-
-            <div className="flex gap-8 mb-6 text-lg font-semibold">
-
-                <div>
-                    Player 1:
-
-                    <span className="text-blue-300 ml-2">
-                        {scores[1]}
-                    </span>
-                </div>
-
-
-                <div>
-                    Player 2:
-
-                    <span className="text-pink-300 ml-2">
-                        {scores[2]}
-                    </span>
-                </div>
-
-            </div>
 
 
             {/* HEART BOARD */}
@@ -853,6 +694,7 @@ const PoisonHearts = () => {
                 phase={phase}
                 currentPlayer={currentPlayer}
                 playerNumber={playerNumber}
+                playerNames={playerNames}
                 myPoisonHeart={myPoisonHeart}
                 selectedHearts={selectedHearts}
                 explodingHeart={explodingHeart}
@@ -878,26 +720,18 @@ const PoisonHearts = () => {
                 isDraw={isDraw}
             />
 
+            {/* SCORE */}
+            <div className="mt-5 text-base sm:text-lg text-white text-center">
+                <span>
+                    {playerNames[1] || "Player 1"}: {scores[1] || 0}
+                </span>
 
-            {/* RESULT */}
+                {" | "}
 
-            {winner !== null && (
-                <div className="mt-8 text-xl font-bold">
-
-                    {winner === playerNumber
-                        ? "🎉 You won the game!"
-                        : "💔 Your opponent won!"
-                    }
-
-                </div>
-            )}
-
-
-            {isDraw && (
-                <div className="mt-8 text-xl font-bold text-pink-300">
-                    ❤️ Both players survived!
-                </div>
-            )}
+                <span>
+                    {playerNames[2] || "Player 2"}: {scores[2] || 0}
+                </span>
+            </div>
 
 
             {/* PLAY AGAIN REQUEST */}

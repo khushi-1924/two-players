@@ -29,6 +29,8 @@ import '../GameCommon.css';
 import "../../components/Instructions/Instructions.css";
 import Instructions from "../../components/Instructions/Instructions";
 
+import usePlayerNames from "../../hooks/usePlayerNames";
+
 
 const ConnectFour = () => {
 
@@ -61,12 +63,12 @@ const ConnectFour = () => {
       "roomId"
     );
 
-  const playerNumber =
-    Number(
-      sessionStorage.getItem(
-        "playerNumber"
-      )
-    );
+  const {
+    playerNames,
+    // myName,
+    // opponentName,
+    playerNumber,
+  } = usePlayerNames();
 
 
   // ==========================================
@@ -443,6 +445,7 @@ const ConnectFour = () => {
           playerNumber={
             playerNumber
           }
+          playerNames={playerNames}
           winner={winner}
           winningCells={
             winningCells

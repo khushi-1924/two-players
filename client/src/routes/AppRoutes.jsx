@@ -23,10 +23,6 @@ import Signup from "../pages/Signup";
 
 import RoomSelection from "../rooms/RoomSelection";
 
-import CreateRoom from "../rooms/CreateRoom";
-
-import JoinRoom from "../rooms/JoinRoom";
-
 import GameRoom from "../rooms/GameRoom";
 
 import GameLayout from "../layouts/GameLayout";
@@ -60,16 +56,6 @@ const AppRoutes = () => {
       <Route
         path="/signup"
         element={<Signup />}
-      />
-
-      <Route
-        path="/create-room"
-        element={<CreateRoom />}
-      />
-
-      <Route
-        path="/join-room"
-        element={<JoinRoom />}
       />
 
       <Route

@@ -24,6 +24,8 @@ import '../GameCommon.css';
 import "../../components/Instructions/Instructions.css";
 import Instructions from "../../components/Instructions/Instructions";
 
+import usePlayerNames from "../../hooks/usePlayerNames";
+
 
 const RockPaperScissors = () => {
 
@@ -45,10 +47,12 @@ const RockPaperScissors = () => {
   const roomId =
     sessionStorage.getItem("roomId");
 
-  const playerNumber =
-    Number(
-      sessionStorage.getItem("playerNumber")
-    );
+  const {
+    playerNames,
+    // myName,
+    // opponentName,
+    playerNumber,
+  } = usePlayerNames();
 
 
   // ==========================================
@@ -71,8 +75,8 @@ const RockPaperScissors = () => {
 
   const [scores, setScores] =
     useState({
-      you: 0,
-      opponent: 0
+      1: 0,
+      2: 0
     });
 
 
@@ -147,24 +151,12 @@ const RockPaperScissors = () => {
 
       // Restore scores
 
-      const serverScores =
+      setScores(
         data.scores || {
           1: 0,
           2: 0
-        };
-
-
-      setScores({
-
-        you:
-          serverScores[playerNumber] || 0,
-
-        opponent:
-          serverScores[
-          playerNumber === 1 ? 2 : 1
-          ] || 0
-
-      });
+        }
+      );
 
     }, [playerNumber]);
 
@@ -217,24 +209,12 @@ const RockPaperScissors = () => {
       }
 
 
-      const serverScores =
+      setScores(
         data.scores || {
           1: 0,
           2: 0
-        };
-
-
-      setScores({
-
-        you:
-          serverScores[playerNumber] || 0,
-
-        opponent:
-          serverScores[
-          playerNumber === 1 ? 2 : 1
-          ] || 0
-
-      });
+        }
+      );
 
     }, [playerNumber]);
 
@@ -278,26 +258,14 @@ const RockPaperScissors = () => {
 
       // Keep scores
 
-      const serverScores =
+      setScores(
         data.scores || {
           1: 0,
           2: 0
-        };
+        }
+      );
 
-
-      setScores({
-
-        you:
-          serverScores[playerNumber] || 0,
-
-        opponent:
-          serverScores[
-          playerNumber === 1 ? 2 : 1
-          ] || 0
-
-      });
-
-    }, [playerNumber]);
+    }, []);
 
 
   // ==========================================
@@ -470,6 +438,8 @@ const RockPaperScissors = () => {
           result={
             result
           }
+
+          playerNames={playerNames}
 
           scores={
             scores
