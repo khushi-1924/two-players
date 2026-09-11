@@ -1014,168 +1014,199 @@ const GuessTheNumber = () => {
 
 
       {/* =====================================
-                            PLAYING
-                    ===================================== */}
+                      PLAYING
+              ===================================== */}
 
-      {gameState.status ===
-        "playing" && (
+      {gameState.status === "playing" && (
 
-          <>
+        <>
 
-            {/* TURN CARD */}
+          {/* ===============================
+              TURN CARD
+        =============================== */}
 
-            <div className={`w-full mx-auto
-                            flex flex-col
-                            justify-center
-                            items-center
-                            px-[25px]
-                            py-[22px]
-                            mb-[22px]
-                            rounded-[10px]
-                            max-[700px]:p-[18px]
-                            max-[700px]:gap-[13px]
-                            max-[500px]:items-start
-                            max-[500px]:p-4
-                        `}>
+          <div className="
+      w-full
+      mx-auto
+      px-5
+      py-5
+      mb-[22px]
+      rounded-[18px]
+      bg-white/[0.06]
+      border
+      border-white/[0.12]
+      text-center
+      backdrop-blur-[8px]
+      max-[700px]:px-4
+      max-[700px]:py-[18px]
+    ">
 
-              <h4 className="
-                                    m-0
-                                    mb-1
-                                    text-white text-center
-                                    text-[21px]
-                                    font-semibold
-                                    max-[500px]:text-lg
-                                ">
-                {isMyTurn
-                  ? "Your Turn"
-                  : "Opponent's Turn"}
-              </h4>
+            <h4 className="
+        m-0
+        mb-1
+        text-white
+        text-[21px]
+        font-semibold
+        max-[500px]:text-lg
+      ">
+              {isMyTurn ? "Your Turn" : "Opponent's Turn"}
+            </h4>
 
-              <p className="
-                                    m-0
-                                    text-[#bdbdbd]
-                                    text-sm
-                                    max-[500px]:text-[13px]
-                                    max-[500px]:leading-[1.4]
-                                ">
-                {isMyTurn
-                  ? `Guess the number`
-                  : "Wait for your opponent to make a guess."}
-              </p>
+            <p className="
+        m-0
+        text-[#bdbdbd]
+        text-sm
+        max-[500px]:text-[13px]
+      ">
+              {isMyTurn
+                ? "Guess the number"
+                : "Wait for your opponent to make a guess."
+              }
+            </p>
+
+          </div>
 
 
-              <div>
+          {/* ===============================
+          TWO PLAYER GAME SECTION
+        =============================== */}
+
+          <div className="
+      w-full
+      grid
+      grid-cols-2
+      gap-5
+      mb-[22px]
+      max-[767px]:grid-cols-1
+    ">
+
+
+            {/* ===============================
+                YOUR SIDE
+          =============================== */}
+
+            <div className="
+        w-full
+        box-border
+        bg-white/[0.06]
+        border
+        border-white/[0.12]
+        rounded-[18px]
+        p-[25px]
+        backdrop-blur-[8px]
+        max-[700px]:p-[20px]
+        max-[500px]:p-4
+      ">
+
+              {/* YOUR HEADER */}
+
+              <div className="
+          flex
+          items-center
+          justify-center
+          gap-2
+          mb-5
+        ">
+
+
+
+
+
               </div>
 
-            </div>
 
+              {/* ===============================
+              MAKE YOUR GUESS
+          =============================== */}
 
-            {/* GUESS INPUT */}
-
-            <div className="w-full flex gap-5 px-10">
               {isMyTurn && (
 
-                <div className="w-full
-                                box-border
-                                bg-white/[0.06]
-                                border
-                                border-white/[0.12]
-                                rounded-[18px]
-                                p-[30px]
-                                mb-[22px]
-                                backdrop-blur-[8px]
-                                max-[700px]:p-[22px_16px]
-                                max-[700px]:rounded-[15px]
-                            ">
+                <div className="
+            mb-[25px]
+            p-5
+            rounded-[15px]
+            bg-black/[0.18]
+            border
+            border-white/[0.08]
+            max-[500px]:p-4
+          ">
 
                   <h4 className="
-                                    m-0
-                                    mb-2.5
-                                    text-blue-200
-                                    text-center
-                                    text-[clamp(21px,3vw,27px)]
-                                    font-semibold
-                                ">
+              m-0
+              mb-[15px]
+              text-blue-200
+              text-center
+              text-lg
+              font-semibold
+              max-[500px]:text-base
+            ">
                     Make Your Guess
                   </h4>
 
 
-                  <div
-                    className="
-                              flex
-                              flex-row
-                              items-center
-                              justify-center
-                              gap-3
-                              w-full
-                              max-[500px]:flex-col
-                            "
-                  >
+                  <div className="
+              flex
+              flex-row
+              items-center
+              justify-center
+              gap-3
+              w-full
+              max-[500px]:flex-col
+            ">
 
                     <input
                       type="text"
                       inputMode="numeric"
-                      maxLength={
-                        gameState.digitLength
-                      }
+                      maxLength={gameState.digitLength}
                       value={guess}
-                      onChange={
-                        handleGuessChange
-                      }
-                      placeholder={
-                        "•".repeat(
-                          gameState.digitLength
-                        )
-                      }
+                      onChange={handleGuessChange}
+                      placeholder={"•".repeat(gameState.digitLength)}
                       autoFocus
-                      className=" w-[min(100%,280px)]
-                                            box-border
-                                            px-5
-                                            py-2
-                                            rounded-xl
-                                            border-2
-                                            border-[#f58acb]/35
-                                            bg-black/25
-                                            text-white
-                                            text-[26px]
-                                            font-semibold
-                                            tracking-[8px]
-                                            text-center
-                                            outline-none
-                                            transition-all
-                                            duration-200
-                                            focus:border-[#f58acb]
-                                            placeholder:text-[#777]
-                                            placeholder:tracking-[8px]
-                                            max-[500px]:w-full
-                                            max-[500px]:text-[23px]
-                                            max-[500px]:py-3
-                                            max-[500px]:tracking-[6px]
-                                        "
+                      className="
+                  w-[min(100%,220px)]
+                  box-border
+                  px-4
+                  py-2.5
+                  rounded-xl
+                  border-2
+                  border-[#f58acb]/35
+                  bg-black/25
+                  text-white
+                  text-[23px]
+                  font-semibold
+                  tracking-[7px]
+                  text-center
+                  outline-none
+                  transition-all
+                  duration-200
+                  focus:border-[#f58acb]
+                  focus:shadow-[0_0_0_3px_rgba(245,138,203,0.12)]
+                  placeholder:text-[#777]
+                  placeholder:tracking-[7px]
+                  max-[500px]:w-full
+                  max-[500px]:text-[21px]
+                  max-[500px]:tracking-[5px]
+                "
                     />
 
-
                     <button
-                      onClick={
-                        submitGuess
-                      }
+                      onClick={submitGuess}
                       className="
-                                            border-none
-                                            rounded-xl
-                                            px-6
-                                            py-3.5
-                                            bg-pink-400
-                                            text-white
-                                            text-lg
-                                            font-semibold
-                                            cursor-pointer
-                                            whitespace-nowrap
-                                            transition-all
-                                            duration-200
-                                            hover:opacity-80
-                                            max-[500px]:w-full
-                                            max-[500px]:py-[13px]
-                                        "
+                  border-none
+                  rounded-xl
+                  px-5
+                  py-3
+                  bg-pink-400
+                  text-white
+                  text-base
+                  font-semibold
+                  cursor-pointer
+                  whitespace-nowrap
+                  transition-all
+                  duration-200
+                  hover:opacity-80
+                  max-[500px]:w-full
+                "
                     >
                       Guess
                     </button>
@@ -1184,15 +1215,13 @@ const GuessTheNumber = () => {
 
 
                   <p className="
-                                    text-center
-                                    text-[#999]
-                                    text-[13px]
-                                    mt-[15px]
-                                    mb-0
-                                ">
-                    Enter a {gameState.digitLength}
-                    -digit number with no
-                    repeated digits.
+              text-center
+              text-[#888]
+              text-xs
+              mt-3
+              mb-0
+            ">
+                    Enter a {gameState.digitLength}-digit number
                   </p>
 
                 </div>
@@ -1200,52 +1229,42 @@ const GuessTheNumber = () => {
               )}
 
 
-              {/* MY GUESS HISTORY */}
+              {/* ===============================
+              YOUR GUESS HISTORY
+          =============================== */}
 
-              <div className="
-                            w-full
-                            box-border
-                            bg-white/[0.06]
-                            border
-                            border-white/[0.12]
-                            rounded-[18px]
-                            p-[30px]
-                            mb-[22px]
-                            backdrop-blur-[8px]
-                            max-[700px]:p-[22px_16px]
-                            max-[700px]:rounded-[15px]
-                        ">
+              <div>
 
                 <div className="
-                                flex
-                                items-center
-                                justify-center
-                                gap-2.5
-                                mb-5
-                            ">
+            flex
+            items-center
+            justify-center
+            gap-2.5
+            mb-4
+          ">
 
                   <h4 className="
-                                    m-0
-                                    text-blue-200
-                                    text-[clamp(21px,3vw,27px)]
-                                    font-semibold
-                                ">
+              m-0
+              text-blue-200
+              text-[clamp(19px,3vw,24px)]
+              font-semibold
+            ">
                     Your Guesses
                   </h4>
 
                   <span className="
-                                    min-w-[25px]
-                                    h-[25px]
-                                    px-[7px]
-                                    rounded-[20px]
-                                    flex
-                                    items-center
-                                    justify-center
-                                    bg-[#f58acb]/[0.18]
-                                    text-[#f58acb]
-                                    text-[13px]
-                                    font-semibold
-                                ">
+              min-w-[25px]
+              h-[25px]
+              px-[7px]
+              rounded-[20px]
+              flex
+              items-center
+              justify-center
+              bg-[#f58acb]/[0.18]
+              text-[#f58acb]
+              text-[13px]
+              font-semibold
+            ">
                     {myGuesses.length}
                   </span>
 
@@ -1255,27 +1274,20 @@ const GuessTheNumber = () => {
                 {myGuesses.length === 0 ? (
 
                   <div className="
-                                    flex
-                                    flex-col
-                                    items-center
-                                    justify-center
-                                    p-[30px]
-                                    text-[#888]
-                                ">
+              flex
+              flex-col
+              items-center
+              justify-center
+              p-[25px]
+              text-[#888]
+            ">
 
-                    <span className="
-                                        text-[30px]
-                                        mb-2
-                                    ">
+                    <span className="text-[28px] mb-2">
                       🔍
                     </span>
 
-                    <p className="
-                                        m-0
-                                        text-sm
-                                    ">
-                      Your guesses will
-                      appear here.
+                    <p className="m-0 text-sm text-center">
+                      Your guesses will appear here.
                     </p>
 
                   </div>
@@ -1283,103 +1295,260 @@ const GuessTheNumber = () => {
                 ) : (
 
                   <div className="
-                                    w-full
-                                    overflow-x-auto
-                                ">
+              w-full
+              overflow-x-auto
+            ">
+
+                    {/* TABLE HEADER */}
 
                     <div className="
-                                        min-w-[500px]
-                                        grid
-                                        grid-cols-[1.2fr_1fr_1.3fr]
-                                        items-center
-                                        text-center
-                                        px-2.5
-                                        py-[13px]
-                                        border-b
-                                        border-white/[0.08]
-                                        text-[#999]
-                                        text-xs
-                                        font-semibold
-                                        uppercase
-                                        tracking-[0.4px]
-                                        max-[500px]:min-w-[450px]
-                                        max-[500px]:py-[11px]
-                                        max-[500px]:px-1.5
-                                        max-[500px]:text-[13px]
-                                    ">
+                min-w-[390px]
+                grid
+                grid-cols-[1.2fr_1fr_1.3fr]
+                items-center
+                text-center
+                px-2
+                py-2.5
+                border-b
+                border-white/[0.08]
+                text-[#999]
+                text-[11px]
+                font-semibold
+                uppercase
+                tracking-[0.3px]
+              ">
 
-                      <span>
-                        Guess
-                      </span>
-
-                      <span>
-                        Correct Digits
-                      </span>
-
-                      <span>
-                        Correct Positions
-                      </span>
+                      <span>Guess</span>
+                      <span>Digits</span>
+                      <span>Positions</span>
 
                     </div>
 
 
-                    {myGuesses.map(
-                      (item, index) => (
+                    {/* GUESSES */}
 
-                        <div
-                          className="
-                                                min-w-[500px]
-                                                grid
-                                                grid-cols-[1.2fr_1fr_1.3fr]
-                                                items-center
-                                                text-center
-                                                px-2.5
-                                                py-[13px]
-                                                border-b
-                                                border-white/[0.08]
-                                                text-[#dddddd]
-                                                text-sm
-                                                max-[500px]:min-w-[450px]
-                                                max-[500px]:py-[11px]
-                                                max-[500px]:px-1.5
-                                                max-[500px]:text-[13px]
-                                            "
-                          key={index}
-                        >
+                    {myGuesses.map((item, index) => (
 
-                          <span className="
-                                                text-[#f58acb]
-                                                text-lg
-                                                font-semibold
-                                                tracking-[3px]
-                                                max-[500px]:text-base
-                                                max-[500px]:tracking-[2px]
-                                            ">
-                            {item.guess}
-                          </span>
+                      <div
+                        key={index}
+                        className="
+                    min-w-[390px]
+                    grid
+                    grid-cols-[1.2fr_1fr_1.3fr]
+                    items-center
+                    text-center
+                    px-2
+                    py-3
+                    border-b
+                    border-white/[0.08]
+                    text-[#dddddd]
+                    text-sm
+                  "
+                      >
 
-                          <span>
-                            {item.correctDigits}
-                          </span>
+                        <span className="
+                    text-[#f58acb]
+                    text-base
+                    font-semibold
+                    tracking-[2px]
+                  ">
+                          {item.guess}
+                        </span>
 
-                          <span>
-                            {item.correctPositions}
-                          </span>
+                        <span>
+                          {item.correctDigits}
+                        </span>
 
-                        </div>
+                        <span>
+                          {item.correctPositions}
+                        </span>
 
-                      ))}
+                      </div>
+
+                    ))}
 
                   </div>
 
                 )}
 
               </div>
+
             </div>
 
-          </>
 
-        )}
+            {/* ===============================
+            OPPONENT'S SIDE
+        =============================== */}
+
+            <div className="
+        w-full
+        box-border
+        bg-white/[0.06]
+        border
+        border-white/[0.12]
+        rounded-[18px]
+        p-[25px]
+        backdrop-blur-[8px]
+        max-[700px]:p-[20px]
+        max-[500px]:p-4
+      ">
+
+              {/* OPPONENT HEADER */}
+
+              <div className="
+          flex
+          items-center
+          justify-center
+          pt-5
+          gap-2
+          mb-5
+        ">
+                <h4 className="
+              m-0
+              text-blue-200
+              text-[clamp(19px,3vw,24px)]
+              font-semibold
+            ">
+                  Opponent's Guesses
+                </h4>
+
+                <span className="
+              min-w-[25px]
+              h-[25px]
+              px-[7px]
+              rounded-[20px]
+              flex
+              items-center
+              justify-center
+              bg-[#f58acb]/[0.18]
+              text-[#f58acb]
+              text-[13px]
+              font-semibold
+            ">
+                  {(gameState.guesses?.[opponentNumber]?.length || 0)}
+                </span>
+
+              </div>
+
+
+
+
+              {/* OPPONENT GUESS HISTORY */}
+
+              {(
+                gameState.guesses?.[opponentNumber]?.length || 0
+              ) === 0 ? (
+
+                <div className="
+            flex
+            flex-col
+            items-center
+            justify-center
+            p-[30px]
+            text-[#888]
+          ">
+
+                  <span className="text-[28px] mb-2">
+                    ⏳
+                  </span>
+
+                  <p className="
+              m-0
+              text-sm
+              text-center
+            ">
+                    Waiting for opponent's first guess...
+                  </p>
+
+                </div>
+
+              ) : (
+
+                <div className="
+            w-full
+            overflow-x-auto
+          ">
+
+                  {/* TABLE HEADER */}
+
+                  <div className="
+              min-w-[390px]
+              grid
+              grid-cols-[1.2fr_1fr_1.3fr]
+              items-center
+              text-center
+              px-2
+              py-2.5
+              border-b
+              border-white/[0.08]
+              text-[#999]
+              text-[11px]
+              font-semibold
+              uppercase
+              tracking-[0.3px]
+            ">
+
+                    <span>Guess</span>
+                    <span>Digits</span>
+                    <span>Positions</span>
+
+                  </div>
+
+
+                  {/* OPPONENT GUESSES */}
+
+                  {gameState.guesses[opponentNumber].map(
+                    (item, index) => (
+
+                      <div
+                        key={index}
+                        className="
+                    min-w-[390px]
+                    grid
+                    grid-cols-[1.2fr_1fr_1.3fr]
+                    items-center
+                    text-center
+                    px-2
+                    py-3
+                    border-b
+                    border-white/[0.08]
+                    text-[#dddddd]
+                    text-sm
+                  "
+                      >
+
+                        <span className="
+                    text-blue-200
+                    text-base
+                    font-semibold
+                    tracking-[2px]
+                  ">
+                          {item.guess}
+                        </span>
+
+                        <span>
+                          {item.correctDigits}
+                        </span>
+
+                        <span>
+                          {item.correctPositions}
+                        </span>
+
+                      </div>
+
+                    )
+                  )}
+
+                </div>
+
+              )}
+
+            </div>
+
+          </div>
+        </>
+
+      )}
 
 
       {/* =====================================

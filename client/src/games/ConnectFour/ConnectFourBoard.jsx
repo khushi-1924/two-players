@@ -150,9 +150,9 @@ const ConnectFourBoard = ({
                                         ${isWinningCell
                                             ? cell === 1
                                                 ? `
-                                                        bg-blue-600
+                                                        bg-sky-700
                                                         border-1
-                                                        border-blue-400
+                                                        border-blue-600
                                                         shadow-[0_0_10px_0_rgba(96,165,250,0.8)]
                                                     `
                                                 : `
