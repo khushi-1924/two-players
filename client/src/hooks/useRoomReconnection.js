@@ -51,10 +51,6 @@ const useRoomReconnection = () => {
     }
 
 
-    const playerNumber =
-      Number(savedPlayerNumber);
-
-
     // ==========================================
     // REJOIN ROOM
     // ==========================================
@@ -69,8 +65,7 @@ const useRoomReconnection = () => {
       socket.emit(
         "rejoinRoom",
         {
-          roomId,
-          playerNumber
+          roomId
         }
       );
 
@@ -166,7 +161,8 @@ const useRoomReconnection = () => {
                 restoredGame:
                   data.currentGame,
                 scores:
-                  data.scores
+                  data.scores,
+                isReconnection: true
               }
             }
           );

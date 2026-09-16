@@ -132,33 +132,33 @@ const Home = () => {
 
   }, [navigate]);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const handlePlayerDisconnected = (data) => {
+  //   const handlePlayerDisconnected = (data) => {
 
-      console.log(
-        "PLAYER DISCONNECTED EVENT RECEIVED:",
-        data
-      );
+  //     console.log(
+  //       "PLAYER DISCONNECTED EVENT RECEIVED:",
+  //       data
+  //     );
 
-      setDisconnectedPlayer(data);
-    };
+  //     setDisconnectedPlayer(data);
+  //   };
 
-    socket.on(
-      "playerDisconnected",
-      handlePlayerDisconnected
-    );
+  //   socket.on(
+  //     "playerDisconnected",
+  //     handlePlayerDisconnected
+  //   );
 
-    return () => {
+  //   return () => {
 
-      socket.off(
-        "playerDisconnected",
-        handlePlayerDisconnected
-      );
+  //     socket.off(
+  //       "playerDisconnected",
+  //       handlePlayerDisconnected
+  //     );
 
-    };
+  //   };
 
-  }, []);
+  // }, []);
 
 
   // ==========================================

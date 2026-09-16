@@ -107,99 +107,99 @@ const TicTacToe = () => {
   // RESTORE STATE IMMEDIATELY AFTER REJOIN
   // ==========================================
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const savedGameState =
-      sessionStorage.getItem(
-        "rejoinedGameState"
-      );
+  //   const savedGameState =
+  //     sessionStorage.getItem(
+  //       "rejoinedGameState"
+  //     );
 
-    if (!savedGameState) {
-      return;
-    }
+  //   if (!savedGameState) {
+  //     return;
+  //   }
 
-    try {
+  //   try {
 
-      const data =
-        JSON.parse(savedGameState);
+  //     const data =
+  //       JSON.parse(savedGameState);
 
-      const restoredGame =
-        data.currentGame;
+  //     const restoredGame =
+  //       data.currentGame;
 
-      if (
-        restoredGame &&
-        restoredGame.name ===
-        "ticTacToe"
-      ) {
+  //     if (
+  //       restoredGame &&
+  //       restoredGame.name ===
+  //       "ticTacToe"
+  //     ) {
 
-        console.log(
-          "Restoring Tic Tac Toe from rejoin:",
-          restoredGame
-        );
+  //       console.log(
+  //         "Restoring Tic Tac Toe from rejoin:",
+  //         restoredGame
+  //       );
 
-        // Restore board
-        setBoard(
-          restoredGame.board ||
-          Array(9).fill(null)
-        );
+  //       // Restore board
+  //       setBoard(
+  //         restoredGame.board ||
+  //         Array(9).fill(null)
+  //       );
 
-        // Restore turn
-        setCurrentPlayer(
-          restoredGame.currentPlayer
-        );
+  //       // Restore turn
+  //       setCurrentPlayer(
+  //         restoredGame.currentPlayer
+  //       );
 
-        // Restore scores
-        setScores(
-          data.scores || {
-            1: 0,
-            2: 0
-          }
-        );
+  //       // Restore scores
+  //       setScores(
+  //         data.scores || {
+  //           1: 0,
+  //           2: 0
+  //         }
+  //       );
 
-        // Restore finished game
-        if (
-          restoredGame.status ===
-          "finished"
-        ) {
+  //       // Restore finished game
+  //       if (
+  //         restoredGame.status ===
+  //         "finished"
+  //       ) {
 
-          setWinner(
-            restoredGame.winner || null
-          );
+  //         setWinner(
+  //           restoredGame.winner || null
+  //         );
 
-          setWinningCells(
-            restoredGame.winningCells || []
-          );
+  //         setWinningCells(
+  //           restoredGame.winningCells || []
+  //         );
 
-          setIsDraw(
-            restoredGame.draw || false
-          );
+  //         setIsDraw(
+  //           restoredGame.draw || false
+  //         );
 
-        } else {
+  //       } else {
 
-          setWinner(null);
+  //         setWinner(null);
 
-          setWinningCells([]);
+  //         setWinningCells([]);
 
-          setIsDraw(false);
-        }
+  //         setIsDraw(false);
+  //       }
 
-      }
+  //     }
 
-    } catch (error) {
+  //   } catch (error) {
 
-      console.error(
-        "Error restoring game state:",
-        error
-      );
+  //     console.error(
+  //       "Error restoring game state:",
+  //       error
+  //     );
 
-    }
+  //   }
 
-    // Remove temporary state
-    sessionStorage.removeItem(
-      "rejoinedGameState"
-    );
+  //   // Remove temporary state
+  //   sessionStorage.removeItem(
+  //     "rejoinedGameState"
+  //   );
 
-  }, []);
+  // }, []);
 
 
   // ==========================================

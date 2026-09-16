@@ -45,9 +45,9 @@ const ConnectFour = () => {
   const {
     game,
     restoredGame,
-    scores: restoredScores
-  } =
-    location.state || {};
+    scores: restoredScores,
+    isReconnection
+  } = location.state || {};
 
   const gameInfo = gamesList.find(
     (item) => item.gameId === "connectFour"
@@ -65,8 +65,6 @@ const ConnectFour = () => {
 
   const {
     playerNames,
-    // myName,
-    // opponentName,
     playerNumber,
   } = usePlayerNames();
 
@@ -88,14 +86,14 @@ const ConnectFour = () => {
 
   const [currentPlayer, setCurrentPlayer] =
     useState(
-      restoredGame?.currentPlayer ||
+      restoredGame?.currentPlayer ??
       null
     );
 
 
   const [winner, setWinner] =
     useState(
-      restoredGame?.winner ||
+      restoredGame?.winner ??
       null
     );
 
@@ -176,6 +174,48 @@ const ConnectFour = () => {
       );
 
     }, []);
+
+  useEffect(() => {
+
+    if (!restoredGame) {
+      return;
+    }
+
+    setBoard(
+      restoredGame.board
+    );
+
+    setCurrentPlayer(
+      restoredGame.currentPlayer
+    );
+
+    setWinner(
+      restoredGame.winner ||
+      null
+    );
+
+    setWinningCells(
+      restoredGame.winningCells ||
+      []
+    );
+
+    setIsDraw(
+      restoredGame.draw ||
+      false
+    );
+
+    if (restoredScores) {
+
+      setScores(
+        restoredScores
+      );
+
+    }
+
+  }, [
+    restoredGame,
+    restoredScores
+  ]);
 
 
   // ==========================================
@@ -362,16 +402,20 @@ const ConnectFour = () => {
       };
 
 
-    if (socket.connected) {
+    if (!isReconnection) {
 
-      startGame();
+      if (socket.connected) {
 
-    } else {
+        startGame();
 
-      socket.once(
-        "connect",
-        startGame
-      );
+      } else {
+
+        socket.once(
+          "connect",
+          startGame
+        );
+
+      }
 
     }
 
@@ -404,7 +448,7 @@ const ConnectFour = () => {
 
     };
 
-  }, [roomId]);
+  }, [roomId, isReconnection]);
 
 
   // ==========================================

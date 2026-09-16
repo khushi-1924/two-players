@@ -1,17 +1,34 @@
 import {
     rooms,
-    disconnectTimers
+    disconnectTimers,
+    RECONNECT_WINDOW
 } from "../roomStore.js";
 
-import getPublicGameState from "../../games/getPublicGameState.js";
+import getPublicGameState
+    from "../../games/getPublicGameState.js";
 
-const reconnectionHandler = (io, socket) => {
+
+const reconnectionHandler = (
+    io,
+    socket
+) => {
 
     socket.on(
         "rejoinRoom",
-        ({ roomId, playerNumber, name }) => {
+        ({ roomId }) => {
 
-            const room = rooms[roomId];
+            roomId =
+                roomId
+                    ?.trim()
+                    .toUpperCase();
+
+            const room =
+                rooms[roomId];
+
+
+            // ==========================================
+            // ROOM NOT FOUND
+            // ==========================================
 
             if (!room) {
 
@@ -27,31 +44,38 @@ const reconnectionHandler = (io, socket) => {
             }
 
 
-            // =================================================
+            // ==========================================
+            // GET PLAYER ID
+            // ==========================================
+
+            const playerId =
+                socket.handshake.auth.playerId;
+
+
+            if (!playerId) {
+
+                socket.emit(
+                    "rejoinFailed",
+                    {
+                        message:
+                            "Player identity not found"
+                    }
+                );
+
+                return;
+            }
+
+
+            // ==========================================
             // FIND PLAYER
-            // Supports playerNumber and name
-            // =================================================
+            // ==========================================
 
-            let player = null;
-
-            if (playerNumber !== undefined) {
-
-                player = room.players.find(
+            const player =
+                room.players.find(
                     p =>
-                        p.playerNumber ===
-                        Number(playerNumber)
+                        p.playerId ===
+                        playerId
                 );
-
-            }
-
-            if (!player && name) {
-
-                player = room.players.find(
-                    p =>
-                        p.name === name
-                );
-
-            }
 
 
             if (!player) {
@@ -68,52 +92,81 @@ const reconnectionHandler = (io, socket) => {
             }
 
 
+            // ==========================================
+            // CHECK RECONNECTION WINDOW
+            // ==========================================
+
+            if (
+                player.disconnectedAt &&
+                Date.now() -
+                player.disconnectedAt >
+                RECONNECT_WINDOW
+            ) {
+
+                socket.emit(
+                    "rejoinFailed",
+                    {
+                        message:
+                            "Reconnection time expired"
+                    }
+                );
+
+                return;
+            }
+
+
             console.log(
                 `${player.name} is rejoining room ${roomId}`
             );
 
 
-            // =================================================
-            // REPLACE OLD SOCKET
-            // =================================================
+            // ==========================================
+            // REPLACE SOCKET
+            // ==========================================
 
-            player.socketId = socket.id;
+            player.socketId =
+                socket.id;
 
-            player.connected = true;
+            player.connected =
+                true;
+
+            player.disconnectedAt =
+                null;
+
 
             socket.join(roomId);
 
 
-            // =================================================
+            // ==========================================
             // CANCEL DISCONNECT TIMER
-            // =================================================
+            // ==========================================
 
             const timerKey =
                 `${roomId}-${player.playerNumber}`;
 
 
-            if (disconnectTimers[timerKey]) {
+            if (
+                disconnectTimers[timerKey]
+            ) {
 
                 clearTimeout(
                     disconnectTimers[timerKey]
                 );
 
-                delete disconnectTimers[timerKey];
-
-                console.log(
-                    `Reconnect timer cancelled for ${player.name}`
-                );
+                delete
+                    disconnectTimers[timerKey];
 
             }
 
 
-            // =================================================
-            // SEND ROOM STATE TO RECONNECTED PLAYER
-            // =================================================
+            // ==========================================
+            // RESTORE ROOM
+            // ==========================================
 
             socket.emit(
                 "roomRejoined",
                 {
+
                     roomId,
 
                     playerNumber:
@@ -130,24 +183,29 @@ const reconnectionHandler = (io, socket) => {
 
                     scores:
                         room.scores
+
                 }
             );
 
 
-            // =================================================
-            // NOTIFY OTHER PLAYER
-            // =================================================
+            // ==========================================
+            // NOTIFY OPPONENT
+            // ==========================================
 
-            socket.to(roomId).emit(
-                "playerReconnected",
-                {
-                    playerNumber:
-                        player.playerNumber,
+            socket
+                .to(roomId)
+                .emit(
+                    "playerReconnected",
+                    {
 
-                    playerName:
-                        player.name
-                }
-            );
+                        playerNumber:
+                            player.playerNumber,
+
+                        playerName:
+                            player.name
+
+                    }
+                );
 
 
             console.log(
@@ -158,5 +216,6 @@ const reconnectionHandler = (io, socket) => {
     );
 
 };
+
 
 export default reconnectionHandler;
