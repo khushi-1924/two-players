@@ -325,3 +325,12 @@
 .poison-prompt.finished h2 {
     color: #fca5a5;
 }
+
+.heart.heart-poison:disabled {
+    cursor: not-allowed;
+    filter: drop-shadow(0 0 6px currentColor);
+}
+
+.heart.heart-poison:disabled:hover .heart-icon {
+    transform: none;
+}

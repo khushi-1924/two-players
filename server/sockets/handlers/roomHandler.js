@@ -1,6 +1,10 @@
 import { rooms } from "../roomStore.js";
 import { generateRoomId } from "../utils/roomUtils.js";
 
+const getPlayerId = (socket) => {
+    return socket.handshake.auth.playerId;
+};
+
 const roomHandler = (io, socket) => {
 
     // =====================================================
@@ -31,10 +35,12 @@ const roomHandler = (io, socket) => {
         socket.join(roomId);
 
         rooms[roomId].players.push({
+            playerId: getPlayerId(socket),
             socketId: socket.id,
             name,
             playerNumber: 1,
-            connected: true
+            connected: true,
+            disconnectedAt: null
         });
 
         console.log(`Room created: ${roomId}`);
@@ -81,10 +87,12 @@ const roomHandler = (io, socket) => {
         socket.join(roomId);
 
         room.players.push({
+            playerId: getPlayerId(socket),
             socketId: socket.id,
             name,
             playerNumber: 2,
-            connected: true
+            connected: true,
+            disconnectedAt: null
         });
 
         console.log(

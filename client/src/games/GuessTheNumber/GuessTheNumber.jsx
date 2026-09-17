@@ -25,7 +25,11 @@ const GuessTheNumber = () => {
 
   const location = useLocation();
 
-  const game = location.state?.game;
+  const {
+    game,
+    restoredGame,
+    scores: restoredScores
+  } = location.state || {};
 
   const gameInfo = gamesList.find(
     (item) => item.gameId === "guessTheNumber"
@@ -50,7 +54,9 @@ const GuessTheNumber = () => {
   // =================================================
 
   const [gameState, setGameState] =
-    useState(null);
+    useState(
+      restoredGame || null
+    );
 
   const [error, setError] =
     useState("");
@@ -71,6 +77,32 @@ const GuessTheNumber = () => {
 
   const [guess, setGuess] =
     useState("");
+
+  // =================================================
+  // RESTORE GAME STATE AFTER RECONNECTION
+  // =================================================
+
+  useEffect(() => {
+
+    if (!restoredGame) {
+      return;
+    }
+
+    console.log(
+      "Restoring Guess the Number state:",
+      restoredGame
+    );
+
+    setGameState(restoredGame);
+
+    // These are local input states, so reset them.
+    setSelectedDigitLength(null);
+    setSecretNumber("");
+    setGuess("");
+    setError("");
+    setMessage("");
+
+  }, [restoredGame]);
 
 
   // =================================================
@@ -137,29 +169,30 @@ const GuessTheNumber = () => {
       setMessage(message);
       setError("");
 
-      // Clear the input after saving
       setSecretNumber("");
 
     };
 
 
     const handleGameOver = (data) => {
+
       console.log(
         "Guess the Number game over:",
         data
       );
 
       if (data.gameState) {
+
         setGameState({
           ...data.gameState,
           opponentSecretNumber:
             data.opponentSecretNumber
         });
+
       }
 
-      setMessage(
-        "Game over!"
-      );
+      setMessage("Game over!");
+
     };
 
 
@@ -194,56 +227,6 @@ const GuessTheNumber = () => {
 
 
     // ==========================================
-    // REQUEST GAME FROM SERVER
-    // ==========================================
-
-    const startGame = () => {
-
-      if (!roomId) {
-
-        console.error(
-          "Room ID not found in sessionStorage"
-        );
-
-        setError(
-          "Room information could not be found."
-        );
-
-        return;
-      }
-
-
-      console.log(
-        "Requesting Guess the Number game..."
-      );
-
-
-      socket.emit(
-        "startGame",
-        {
-          roomId,
-          game: "guessTheNumber"
-        }
-      );
-
-    };
-
-
-    if (socket.connected) {
-
-      startGame();
-
-    } else {
-
-      socket.once(
-        "connect",
-        startGame
-      );
-
-    }
-
-
-    // ==========================================
     // CLEANUP
     // ==========================================
 
@@ -274,6 +257,73 @@ const GuessTheNumber = () => {
         handleGameOver
       );
 
+    };
+
+  }, []);
+
+
+  // =================================================
+  // REQUEST GAME FROM SERVER
+  // =================================================
+
+  useEffect(() => {
+
+    if (!roomId) {
+
+      console.error(
+        "Room ID not found in sessionStorage"
+      );
+
+      setError(
+        "Room information could not be found."
+      );
+
+      return;
+    }
+
+
+    // If restoredGame exists,
+    // this is a reconnection.
+    // Do not request/start the game again.
+
+    if (restoredGame) {
+      return;
+    }
+
+
+    const startGame = () => {
+
+      console.log(
+        "Requesting Guess the Number game..."
+      );
+
+      socket.emit(
+        "startGame",
+        {
+          roomId,
+          game: "guessTheNumber"
+        }
+      );
+
+    };
+
+
+    if (socket.connected) {
+
+      startGame();
+
+    } else {
+
+      socket.once(
+        "connect",
+        startGame
+      );
+
+    }
+
+
+    return () => {
+
       socket.off(
         "connect",
         startGame
@@ -281,27 +331,34 @@ const GuessTheNumber = () => {
 
     };
 
-  }, [roomId]);
+  }, [roomId, restoredGame]);
+
 
   // ==========================================
   // GAME RESTARTED
   // ==========================================
 
   const handleGameRestarted = useCallback((data) => {
+
     console.log(
       "Guess the Number game restarted:",
       data
     );
 
-    const newGameState = data.gameState;
+
+    const newGameState =
+      data.gameState;
+
 
     if (!newGameState) {
+
       console.error(
         "Restarted Guess the Number game state is missing"
       );
 
       return;
     }
+
 
     setSelectedDigitLength(null);
     setSecretNumber("");
@@ -310,6 +367,7 @@ const GuessTheNumber = () => {
     setMessage("");
 
     setGameState(newGameState);
+
   }, []);
 
 
@@ -328,6 +386,11 @@ const GuessTheNumber = () => {
     roomId,
     handleGameRestarted
   );
+
+
+  // =================================================
+  // CHOOSE DIGIT LENGTH
+  // =================================================
 
 
   // =================================================

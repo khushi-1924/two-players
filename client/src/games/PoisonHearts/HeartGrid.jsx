@@ -47,6 +47,9 @@ const HeartGrid = ({
       // Not this player's turn
       if (currentPlayer !== playerNumber) return;
 
+      // Cannot select your own poison heart
+      if (heartId === myPoisonHeart) return;
+
       onHeartSelect(heartId);
     }
   };
@@ -66,17 +69,16 @@ const HeartGrid = ({
           const isDisabled =
             phase === "finished" ||
             isSelected ||
+            isMyPoison ||
             (phase === "poisonSelection" && myPoisonHeart !== null) ||
             (phase === "playing" && currentPlayer !== playerNumber);
 
           return (
             <button
               key={heart.id}
-              className={`heart ${
-                isSelected ? "heart-selected" : ""
-              } ${isMyPoison ? "heart-poison" : ""} ${
-                isExploding ? "heart-exploding" : ""
-              }`}
+              className={`heart ${isSelected ? "heart-selected" : ""
+                } ${isMyPoison ? "heart-poison" : ""} ${isExploding ? "heart-exploding" : ""
+                }`}
               onClick={() => handleClick(heart.id)}
               disabled={isDisabled}
             >
@@ -84,9 +86,8 @@ const HeartGrid = ({
                 <span className="explosion-mark">💥</span>
               ) : (
                 <TiHeart
-                  className={`heart-icon ${
-                    colorClasses[heart.color] || "text-gray-400"
-                  }`}
+                  className={`heart-icon ${colorClasses[heart.color] || "text-gray-400"
+                    }`}
                 />
               )}
             </button>

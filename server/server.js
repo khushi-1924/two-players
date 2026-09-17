@@ -13,11 +13,18 @@ const server = http.createServer(app);
 dotenv.config();
 
 const io = new Server(server, {
+
   cors: {
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
     credentials: true
+  },
+
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 15 * 1000,
+    skipMiddlewares: true
   }
+
 });
 
 console.log("CLIENT_URL:", process.env.CLIENT_URL);

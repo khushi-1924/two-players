@@ -32,7 +32,9 @@ const RockPaperScissors = () => {
   const location = useLocation();
 
   const {
-    game
+    game,
+    restoredGame,
+    scores: restoredScores
   } = location.state || {};
 
   const gameInfo = gamesList.find(
@@ -49,8 +51,6 @@ const RockPaperScissors = () => {
 
   const {
     playerNames,
-    // myName,
-    // opponentName,
     playerNumber,
   } = usePlayerNames();
 
@@ -60,24 +60,36 @@ const RockPaperScissors = () => {
   // ==========================================
 
   const [playerChoice, setPlayerChoice] =
-    useState(null);
+    useState(
+      restoredGame?.choices?.[playerNumber] ||
+      null
+    );
 
   const [opponentChoice, setOpponentChoice] =
-    useState(null);
+    useState(
+      restoredGame?.choices?.[
+      playerNumber === 1 ? 2 : 1
+      ] || null
+    );
 
   const [result, setResult] =
-    useState(null);
-
-
-  // ==========================================
-  // SCORE
-  // ==========================================
+    useState(
+      restoredGame?.status === "finished"
+        ? restoredGame.winner === "draw"
+          ? "Draw!"
+          : restoredGame.winner === playerNumber
+            ? "You won! 🎉"
+            : "You lost!"
+        : null
+    );
 
   const [scores, setScores] =
-    useState({
-      1: 0,
-      2: 0
-    });
+    useState(
+      restoredScores || {
+        1: 0,
+        2: 0
+      }
+    );
 
 
   // ==========================================
@@ -302,38 +314,54 @@ const RockPaperScissors = () => {
     );
 
 
-    // ========================================
-    // START / RESTORE GAME
-    // ========================================
+    // Only request the game when this is
+    // a normal game entry.
+    //
+    // During reconnection, useRoomReconnection
+    // already supplied restoredGame.
 
-    const startGame = () => {
+    if (!restoredGame) {
 
-      console.log(
-        "Requesting RPS game state..."
-      );
+      const startGame = () => {
 
-      socket.emit(
-        "startGame",
-        {
-          roomId,
-          game: "rps"
-        }
-      );
+        socket.emit(
+          "startGame",
+          {
+            roomId,
+            game: "rps"
+          }
+        );
 
-    };
+      };
 
+      if (socket.connected) {
+        startGame();
+      }
+      else {
+        socket.once(
+          "connect",
+          startGame
+        );
+      }
 
-    if (socket.connected) {
+      return () => {
 
-      startGame();
+        socket.off(
+          "gameStarted",
+          handleGameStarted
+        );
 
-    }
-    else {
+        socket.off(
+          "rpsRoundResult",
+          handleRoundResult
+        );
 
-      socket.once(
-        "connect",
-        startGame
-      );
+        socket.off(
+          "connect",
+          startGame
+        );
+
+      };
 
     }
 
@@ -350,15 +378,11 @@ const RockPaperScissors = () => {
         handleRoundResult
       );
 
-      socket.off(
-        "connect",
-        startGame
-      );
-
     };
 
   }, [
     roomId,
+    restoredGame,
     handleGameStarted,
     handleRoundResult
   ]);

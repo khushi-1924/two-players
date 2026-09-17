@@ -1,6 +1,7 @@
 import {
     rooms,
-    disconnectTimers
+    disconnectTimers,
+    RECONNECT_WINDOW
 } from "../roomStore.js";
 
 const disconnectHandler = (io, socket) => {
@@ -68,6 +69,9 @@ const disconnectHandler = (io, socket) => {
 
             disconnectedPlayer.connected = false;
 
+            disconnectedPlayer.disconnectedAt =
+                Date.now();
+
 
             console.log(
                 `${disconnectedPlayer.name} disconnected from room ${roomId}`
@@ -99,7 +103,7 @@ const disconnectHandler = (io, socket) => {
                         playerName:
                             disconnectedPlayer.name,
 
-                        timeLeft: 15
+                        timeLeft: RECONNECT_WINDOW / 1000
                     }
                 );
 
@@ -198,14 +202,19 @@ const disconnectHandler = (io, socket) => {
                         // DELETE ROOM
                         // =================================================
 
-                        delete rooms[roomId];
+                        currentRoom.players =
+                            currentRoom.players.filter(
+                                p =>
+                                    p.playerNumber !==
+                                    player.playerNumber
+                            );
 
                         delete disconnectTimers[
                             timerKey
                         ];
 
                     },
-                    15000
+                    RECONNECT_WINDOW
                 );
 
         }

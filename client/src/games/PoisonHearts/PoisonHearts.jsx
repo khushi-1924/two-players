@@ -26,7 +26,11 @@ const PoisonHearts = () => {
 
     const location = useLocation();
 
-    const { game } = location.state || {};
+    const {
+        game,
+        restoredGame,
+        scores: restoredScores
+    } = location.state || {};
 
     const gameInfo = gamesList.find(
         (item) => item.gameId === "poisonHearts"
@@ -37,8 +41,6 @@ const PoisonHearts = () => {
 
     const {
         playerNames,
-        // myName,
-        // opponentName,
         playerNumber,
     } = usePlayerNames();
 
@@ -47,37 +49,62 @@ const PoisonHearts = () => {
     // GAME STATE
     // ==========================================
 
-    const [board, setBoard] = useState([]);
+    const [board, setBoard] =
+        useState(
+            restoredGame?.board || []
+        );
 
     const [phase, setPhase] =
-        useState("poisonSelection");
+        useState(
+            restoredGame?.phase ||
+            "poisonSelection"
+        );
 
     const [currentPlayer, setCurrentPlayer] =
-        useState(null);
+        useState(
+            restoredGame?.currentPlayer ??
+            null
+        );
 
     const [myPoisonHeart, setMyPoisonHeart] =
-        useState(null);
+        useState(
+            restoredGame?.myPoisonChoice ??
+            null
+        );
 
     const [selectedHearts, setSelectedHearts] =
-        useState([]);
+        useState(
+            restoredGame?.selectedHearts || []
+        );
+
+    const [winner, setWinner] =
+        useState(
+            restoredGame?.winner ??
+            null
+        );
+
+    const [loser, setLoser] =
+        useState(
+            restoredGame?.loser ??
+            null
+        );
+
+    const [isDraw, setIsDraw] =
+        useState(
+            restoredGame?.draw ||
+            false
+        );
+
+    const [scores, setScores] =
+        useState(
+            restoredScores || {
+                1: 0,
+                2: 0
+            }
+        );
 
     const [explodingHeart, setExplodingHeart] =
         useState(null);
-
-    const [winner, setWinner] =
-        useState(null);
-
-    const [loser, setLoser] =
-        useState(null);
-
-    const [isDraw, setIsDraw] =
-        useState(false);
-
-    const [scores, setScores] =
-        useState({
-            1: 0,
-            2: 0
-        });
 
 
     // ==========================================
@@ -434,6 +461,67 @@ const PoisonHearts = () => {
 
         }, []);
 
+    // ==========================================
+    // RESTORE GAME STATE AFTER RECONNECTION
+    // ==========================================
+
+    useEffect(() => {
+
+        if (!restoredGame) {
+            return;
+        }
+
+        console.log(
+            "Restoring Poison Hearts state:",
+            restoredGame
+        );
+
+        setBoard(
+            restoredGame.board || []
+        );
+
+        setPhase(
+            restoredGame.phase ||
+            "poisonSelection"
+        );
+
+        setCurrentPlayer(
+            restoredGame.currentPlayer ??
+            null
+        );
+
+        setMyPoisonHeart(
+            restoredGame.myPoisonChoice ??
+            null
+        );
+
+        setSelectedHearts(
+            restoredGame.selectedHearts || []
+        );
+
+        setWinner(
+            restoredGame.winner ??
+            null
+        );
+
+        setLoser(
+            restoredGame.loser ??
+            null
+        );
+
+        setIsDraw(
+            restoredGame.draw ||
+            false
+        );
+
+        setExplodingHeart(null);
+
+        if (restoredScores) {
+            setScores(restoredScores);
+        }
+
+    }, [restoredGame, restoredScores]);
+
 
     // ==========================================
     // GAME SOCKET EVENTS
@@ -519,15 +607,47 @@ const PoisonHearts = () => {
             return;
         }
 
-        socket.emit(
-            "startGame",
-            {
-                roomId,
-                game: "poisonHearts"
-            }
-        );
+        // If this game was restored after refresh,
+        // do NOT start/request the game again.
+        if (restoredGame) {
+            return;
+        }
 
-    }, [roomId]);
+        const startGame = () => {
+
+            socket.emit(
+                "startGame",
+                {
+                    roomId,
+                    game: "poisonHearts"
+                }
+            );
+
+        };
+
+        if (socket.connected) {
+
+            startGame();
+
+        } else {
+
+            socket.once(
+                "connect",
+                startGame
+            );
+
+        }
+
+        return () => {
+
+            socket.off(
+                "connect",
+                startGame
+            );
+
+        };
+
+    }, [roomId, restoredGame]);
 
 
     // ==========================================
