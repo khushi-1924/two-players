@@ -303,7 +303,7 @@ Add screenshots of the application here.
 
 ### Home Page
 
-![Home Page](<img width="1917" height="617" alt="image" src="https://github.com/user-attachments/assets/b4377ff9-036b-4dbb-8ca9-8c0e743f4f45" />)
+<img width="1917" height="617" alt="image" src="https://github.com/user-attachments/assets/b4377ff9-036b-4dbb-8ca9-8c0e743f4f45" />
 
 ### Tic Tac Toe
 
@@ -312,19 +312,19 @@ Add screenshots of the application here.
 
 ### Connect Four
 
-![Connect Four](./screenshots/connect-four.png)
+<img width="1901" height="852" alt="image" src="https://github.com/user-attachments/assets/01055936-f085-4237-9118-bf0a6862e809" />
 
 ### Rock Paper Scissors
 
-![Rock Paper Scissors](./screenshots/rps.png)
+<img width="1917" height="741" alt="image" src="https://github.com/user-attachments/assets/d7a489e4-6948-4096-ba32-a8e2440b9d7b" />
 
 ### Poison Hearts
 
-![Poison Hearts](./screenshots/poison-hearts.png)
+<img width="1052" height="862" alt="image" src="https://github.com/user-attachments/assets/ffd07823-955d-46b1-a0e6-235694afc773" />
 
 ### Guess The Number
 
-![Guess The Number](./screenshots/guess-number.png)
+<img width="1917" height="837" alt="image" src="https://github.com/user-attachments/assets/ddf905ad-602a-4392-9b01-fa6d9edab82c" />
 
 ---
 
