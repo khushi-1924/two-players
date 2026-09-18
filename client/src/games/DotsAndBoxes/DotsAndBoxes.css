@@ -1,0 +1,111 @@
+.dots-boxes-board {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+
+/* ==========================================
+   GRID
+   ========================================== */
+
+.dots-boxes-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* ==========================================
+   ROW
+   ========================================== */
+
+.dots-boxes-row {
+    display: flex;
+    align-items: center;
+}
+
+
+/* ==========================================
+   DOT
+   ========================================== */
+
+.dot {
+    width: 14px;
+    height: 14px;
+
+    border-radius: 50%;
+
+    background-color: #222;
+
+    flex-shrink: 0;
+}
+
+
+/* ==========================================
+   HORIZONTAL EDGE
+   ========================================== */
+
+.horizontal-edge {
+    width: 80px;
+    height: 10px;
+
+    border: none;
+    border-radius: 5px;
+
+    background-color: #d1d5db;
+
+    cursor: pointer;
+
+    padding: 0;
+
+    transition:
+        background-color 0.15s ease;
+}
+
+
+.horizontal-edge:hover {
+    background-color: #9ca3af;
+}
+
+
+/* ==========================================
+   VERTICAL EDGE
+   ========================================== */
+
+.vertical-edge {
+    width: 10px;
+    height: 60px;
+
+    border: none;
+    border-radius: 5px;
+
+    background-color: #d1d5db;
+
+    cursor: pointer;
+
+    padding: 0;
+
+    flex-shrink: 0;
+
+    transition:
+        background-color 0.15s ease;
+}
+
+
+.vertical-edge:hover {
+    background-color: #9ca3af;
+}
+
+
+/* ==========================================
+   SPACE BETWEEN VERTICAL EDGES
+   ========================================== */
+
+.empty-space {
+    width: 80px;
+    height: 60px;
+
+    flex-shrink: 0;
+}

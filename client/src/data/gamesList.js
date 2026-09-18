@@ -227,6 +227,53 @@ export const gamesList = [
           "The first player to correctly guess their opponent's entire secret number wins the game."
       }
     ]
-  }
+  },
+
+  // DOTS AND BOXES
+  {
+    id: 6,
+    gameId: "dotsAndBoxes",
+    name: "Dots and Boxes",
+    path: "/game/dots-and-boxes",
+    description: "Connect dots, complete boxes, and score points.",
+    image: "/images/dots-and-boxes.png",
+    instructions: [
+      {
+        title: "Take turns",
+        description:
+          "Players take turns drawing one line between two adjacent dots. You can draw a horizontal or vertical line."
+      },
+      {
+        title: "Complete a box",
+        description:
+          "If the line you draw completes a box, you claim that box and score 1 point."
+      },
+      {
+        title: "Get another turn",
+        description:
+          "Whenever you complete a box, you get another turn. Keep playing until you draw a line that does not complete a box."
+      },
+      {
+        title: "Plan your moves",
+        description:
+          "Try to complete your own boxes while avoiding moves that allow your opponent to easily claim one."
+      },
+      {
+        title: "Claim the boxes",
+        description:
+          "Completed boxes are marked with the color of the player who claimed them."
+      },
+      {
+        title: "Win the game",
+        description:
+          "When all boxes have been completed, the player with the most boxes wins."
+      },
+      {
+        title: "Draw",
+        description:
+          "If both players complete the same number of boxes, the game ends in a draw."
+      }
+    ]
+  },
 
 ];
