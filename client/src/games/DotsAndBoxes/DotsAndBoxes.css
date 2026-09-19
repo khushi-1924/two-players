@@ -1,111 +1,390 @@
+/* ==========================================
+   DOTS AND BOXES BOARD CONTAINER
+   ========================================== */
+
 .dots-boxes-board {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
 }
 
-
 /* ==========================================
-   GRID
+   BOARD BORDER / CONTAINER
    ========================================== */
 
 .dots-boxes-grid {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+  /*
+    Responsive board size.
+    
+    - On desktop: maximum 650px
+    - On smaller screens: 92vw
+    - GRID_SIZE can be changed freely
+    */
 
+  --board-size: min(92vw, 650px);
+  --horizontal-offset: 0px;
+  --vertical-offset: 0px;
+
+  width: var(--board-size);
+  aspect-ratio: 1 / 1;
+
+  box-sizing: border-box;
+
+  padding: clamp(18px, 3vw, 30px);
+
+  border: 2px solid #4f8cff;
+  border-radius: 20px;
+
+  box-shadow: 0 0 12px rgba(79, 140, 255, 0.35);
+
+  display: grid;
+
+  grid-template-rows: repeat(calc(var(--grid-size) * 2 - 1), 1fr);
+
+  overflow: visible;
+}
 
 /* ==========================================
    ROW
    ========================================== */
 
 .dots-boxes-row {
-    display: flex;
-    align-items: center;
-}
+  display: grid;
 
+  grid-template-columns: repeat(calc(var(--grid-size) * 2 - 1), 1fr);
+
+  width: 100%;
+  height: 100%;
+
+  align-items: center;
+}
 
 /* ==========================================
    DOT
    ========================================== */
 
 .dot {
-    width: 14px;
-    height: 14px;
+  width: clamp(7px, 1.5vw, 14px);
+  height: clamp(7px, 1.5vw, 14px);
 
-    border-radius: 50%;
+  border-radius: 50%;
 
-    background-color: #222;
+  background-color: #fffffe;
 
-    flex-shrink: 0;
+  justify-self: center;
+  align-self: center;
+
+  z-index: 2;
 }
-
 
 /* ==========================================
    HORIZONTAL EDGE
    ========================================== */
 
 .horizontal-edge {
-    width: 80px;
-    height: 10px;
+  width: 170%;
+  height: clamp(5px, 1vw, 9px);
 
-    border: none;
-    border-radius: 5px;
+  border: none;
+  border-radius: 6px;
 
-    background-color: #d1d5db;
+  background-color: transparent;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    padding: 0;
+  padding: 0;
 
-    transition:
-        background-color 0.15s ease;
+  justify-self: center;
+  align-self: center;
+
+  position: relative;
 }
 
+/* The actual visible line */
 
-.horizontal-edge:hover {
-    background-color: #9ca3af;
+.horizontal-edge::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 50%;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 6px;
+
+    background-color: transparent;
+
+    transform:
+        translateY(calc(-50% + var(--horizontal-offset)))
+        scaleX(0);
+
+    transform-origin: center;
 }
 
+/* Player 1 */
+
+.horizontal-edge.player-1::before {
+  background-color: #6488cc;
+
+  animation: drawHorizontalLine 0.25s ease-out forwards;
+}
+
+/* Player 2 */
+
+.horizontal-edge.player-2::before {
+  background-color: #f48fb1;
+
+  animation: drawHorizontalLine 0.25s ease-out forwards;
+}
 
 /* ==========================================
    VERTICAL EDGE
    ========================================== */
 
 .vertical-edge {
-    width: 10px;
-    height: 60px;
+  width: clamp(5px, 1vw, 9px);
+  height: 170%;
 
-    border: none;
-    border-radius: 5px;
+  border: none;
+  border-radius: 6px;
 
-    background-color: #d1d5db;
+  background-color: transparent;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    padding: 0;
+  padding: 0;
 
-    flex-shrink: 0;
+  align-self: center;
+  justify-self: center;
 
-    transition:
-        background-color 0.15s ease;
+  position: relative;
 }
 
+/* The actual visible line */
 
-.vertical-edge:hover {
-    background-color: #9ca3af;
+.vertical-edge::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 6px;
+
+    background-color: transparent;
+
+    transform:
+        translateX(calc(-50% + var(--vertical-offset)))
+        scaleY(0);
+
+    transform-origin: center;
 }
 
+/* Player 1 */
+
+.vertical-edge.player-1::before {
+  background-color: #6488cc;
+
+  animation: drawVerticalLine 0.25s ease-out forwards;
+}
+
+/* Player 2 */
+
+.vertical-edge.player-2::before {
+  background-color: #f48fb1;
+
+  animation: drawVerticalLine 0.25s ease-out forwards;
+}
 
 /* ==========================================
-   SPACE BETWEEN VERTICAL EDGES
+   LINE DRAW ANIMATIONS
+   ========================================== */
+
+@keyframes drawHorizontalLine {
+
+    0% {
+        transform:
+            translateY(calc(-50% + var(--horizontal-offset)))
+            scaleX(0);
+    }
+
+    100% {
+        transform:
+            translateY(calc(-50% + var(--horizontal-offset)))
+            scaleX(1);
+    }
+}
+
+@keyframes drawVerticalLine {
+
+    0% {
+        transform:
+            translateX(calc(-50% + var(--vertical-offset)))
+            scaleY(0);
+    }
+
+    100% {
+        transform:
+            translateX(calc(-50% + var(--vertical-offset)))
+            scaleY(1);
+    }
+}
+
+/* ==========================================
+   EMPTY SPACE
    ========================================== */
 
 .empty-space {
-    width: 80px;
-    height: 60px;
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+}
 
-    flex-shrink: 0;
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+  .dots-boxes-board {
+    padding: 10px;
+  }
+
+  .dots-boxes-grid {
+    --board-size: 94vw;
+    padding: clamp(12px, 3vw, 20px);
+    border-radius: 16px;
+  }
+}
+
+/* ==========================================
+   COMPLETED BOX
+   ========================================== */
+
+.box {
+  width: 180%;
+  height: 180%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  align-self: center;
+  justify-self: center;
+
+  background-color: transparent;
+
+  /*
+        Start tiny/invisible.
+    */
+  transform: scale(0);
+
+  transform-origin: center;
+
+  animation: boxPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ==========================================
+   BOX POP ANIMATION
+   ========================================== */
+
+@keyframes boxPop {
+  0% {
+    transform: scale(0);
+  }
+
+  70% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ==========================================
+   PLAYER 1 BOX
+   ========================================== */
+
+.box.player-1 {
+  background-color: rgba(100, 136, 204, 0.25);
+}
+
+/* ==========================================
+   PLAYER 2 BOX
+   ========================================== */
+
+.box.player-2 {
+  background-color: rgba(244, 143, 177, 0.25);
+}
+
+/* ==========================================
+   BOX HEART
+   ========================================== */
+
+.box-heart {
+  font-size: clamp(35px, 4vw, 35px);
+
+  line-height: 1;
+
+  font-weight: bold;
+
+  user-select: none;
+
+  /*
+        Heart starts small.
+    */
+
+  transform: scale(0);
+
+  animation: heartPop 0.35s 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ==========================================
+   PLAYER 1 HEART
+   ========================================== */
+
+.box.player-1 .box-heart {
+  color: #6488cc;
+
+  text-shadow: 0 0 8px rgba(100, 136, 204, 0.5);
+}
+
+/* ==========================================
+   PLAYER 2 HEART
+   ========================================== */
+
+.box.player-2 .box-heart {
+  color: #f48fb1;
+
+  text-shadow: 0 0 8px rgba(244, 143, 177, 0.5);
+}
+
+/* ==========================================
+   HEART POP ANIMATION
+   ========================================== */
+
+@keyframes heartPop {
+  0% {
+    transform: scale(0);
+  }
+
+  60% {
+    transform: scale(1.25);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
