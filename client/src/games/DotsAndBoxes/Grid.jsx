@@ -1,35 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import { TiHeart } from "react-icons/ti";
+import socket from "../../socket/socket";
 import "./DotsAndBoxes.css";
 
 const GRID_SIZE = 7;
 
-const Grid = () => {
+const Grid = ({
+    currentPlayer,
+    setCurrentPlayer,
 
-    // ==========================================
-    // SELECTED EDGES
-    // ==========================================
+    horizontalLines,
+    setHorizontalLines,
 
-    const [horizontalLines, setHorizontalLines] =
-        useState([]);
+    verticalLines,
+    setVerticalLines,
 
-    const [verticalLines, setVerticalLines] =
-        useState([]);
+    boxes,
+    setBoxes,
 
-    // ==========================================
-    // COMPLETED BOXES
-    // ==========================================
+    setPlayer1Score,
+    setPlayer2Score
+}) => {
 
-    const [boxes, setBoxes] =
-        useState([]);
+    const roomId =
+        sessionStorage.getItem("roomId");
 
-
-    // ==========================================
-    // CURRENT PLAYER
-    // ==========================================
-
-    const [currentPlayer, setCurrentPlayer] =
-        useState(1);
 
     // ==========================================
     // CHECK HORIZONTAL EDGE
@@ -123,190 +118,16 @@ const Grid = () => {
         col
     ) => {
 
-        const edgeId =
-            `${row}-${col}`;
-
-
-        // Don't allow duplicate edge
-
-        if (
-            horizontalLines.some(
-                (edge) =>
-                    edge.id === edgeId
-            )
-        ) {
-            return;
-        }
-
-
-        // Create new edge
-
-        const newEdge = {
-            id: edgeId,
-            player: currentPlayer
-        };
-
-
-        const updatedHorizontalLines = [
-            ...horizontalLines,
-            newEdge
-        ];
-
-
-        setHorizontalLines(
-            updatedHorizontalLines
+        socket.emit(
+            "makeMove",
+            {
+                roomId,
+                type: "horizontal",
+                row,
+                col
+            }
         );
 
-
-        // Check boxes affected by this edge
-
-        const completedBoxes = [];
-
-
-        // This horizontal edge can affect:
-        //
-        // box above
-        // box below
-
-
-        // Box BELOW
-
-        if (
-            row < GRID_SIZE - 1
-        ) {
-
-            const boxRow = row;
-            const boxCol = col;
-
-
-            const top =
-                updatedHorizontalLines.some(
-                    (edge) =>
-                        edge.id ===
-                        `${boxRow}-${boxCol}`
-                );
-
-
-            const bottom =
-                updatedHorizontalLines.some(
-                    (edge) =>
-                        edge.id ===
-                        `${boxRow + 1}-${boxCol}`
-                );
-
-
-            const left =
-                hasVerticalLine(
-                    boxRow,
-                    boxCol
-                );
-
-
-            const right =
-                hasVerticalLine(
-                    boxRow,
-                    boxCol + 1
-                );
-
-
-            if (
-                top &&
-                bottom &&
-                left &&
-                right
-            ) {
-
-                completedBoxes.push({
-                    id: `${boxRow}-${boxCol}`,
-                    row: boxRow,
-                    col: boxCol,
-                    player: currentPlayer
-                });
-
-            }
-
-        }
-
-
-        // Box ABOVE
-
-        if (
-            row > 0
-        ) {
-
-            const boxRow = row - 1;
-            const boxCol = col;
-
-            const top =
-                updatedHorizontalLines.some(
-                    (edge) =>
-                        edge.id ===
-                        `${boxRow}-${boxCol}`
-                );
-
-            const bottom =
-                updatedHorizontalLines.some(
-                    (edge) =>
-                        edge.id ===
-                        `${boxRow + 1}-${boxCol}`
-                );
-
-            const left =
-                hasVerticalLine(
-                    boxRow,
-                    boxCol
-                );
-
-
-            const right =
-                hasVerticalLine(
-                    boxRow,
-                    boxCol + 1
-                );
-
-
-            if (
-                top &&
-                bottom &&
-                left &&
-                right
-            ) {
-
-                completedBoxes.push({
-                    id: `${boxRow}-${boxCol}`,
-                    row: boxRow,
-                    col: boxCol,
-                    player: currentPlayer
-                });
-
-            }
-
-        }
-
-
-        // Add completed boxes
-
-        if (completedBoxes.length > 0) {
-
-            setBoxes((prev) => [
-                ...prev,
-                ...completedBoxes
-            ]);
-
-            // IMPORTANT:
-            // Player gets another turn
-            return;
-        }
-
-
-        // No box completed
-        // Switch player
-
-        setCurrentPlayer(
-            currentPlayer === 1
-                ? 2
-                : 1
-        );
     };
 
 
@@ -319,296 +140,60 @@ const Grid = () => {
         col
     ) => {
 
-        const edgeId =
-            `${row}-${col}`;
-
-
-        // Don't allow duplicate edge
-
-        if (
-            verticalLines.some(
-                (edge) =>
-                    edge.id === edgeId
-            )
-        ) {
-            return;
-        }
-
-
-        // Create new edge
-
-        const newEdge = {
-            id: edgeId,
-            player: currentPlayer
-        };
-
-
-        const updatedVerticalLines = [
-            ...verticalLines,
-            newEdge
-        ];
-
-
-        setVerticalLines(
-            updatedVerticalLines
+        socket.emit(
+            "makeMove",
+            {
+                roomId,
+                type: "vertical",
+                row,
+                col
+            }
         );
 
-
-        // Check boxes affected by this edge
-
-        const completedBoxes = [];
-
-
-        // A vertical edge can affect:
-        //
-        // box on the LEFT
-        // box on the RIGHT
-
-
-        // Box on RIGHT
-
-        if (
-            col < GRID_SIZE - 1
-        ) {
-
-            const boxRow = row;
-            const boxCol = col;
-
-
-            const top =
-                hasHorizontalLine(
-                    boxRow,
-                    boxCol
-                );
-
-
-            const bottom =
-                hasHorizontalLine(
-                    boxRow + 1,
-                    boxCol
-                );
-
-
-            const left =
-                updatedVerticalLines.some(
-                    (edge) =>
-                        edge.id ===
-                        `${boxRow}-${boxCol}`
-                );
-
-
-            const right =
-                updatedVerticalLines.some(
-                    (edge) =>
-                        edge.id ===
-                        `${boxRow}-${boxCol + 1}`
-                );
-
-
-            if (
-                top &&
-                bottom &&
-                left &&
-                right
-            ) {
-
-                completedBoxes.push({
-                    id: `${boxRow}-${boxCol}`,
-                    row: boxRow,
-                    col: boxCol,
-                    player: currentPlayer
-                });
-
-            }
-
-        }
-
-
-        // Box on LEFT
-
-        if (
-            col > 0
-        ) {
-
-            const boxRow = row;
-            const boxCol = col - 1;
-
-
-            const top =
-                hasHorizontalLine(
-                    boxRow,
-                    boxCol
-                );
-
-
-            const bottom =
-                hasHorizontalLine(
-                    boxRow + 1,
-                    boxCol
-                );
-
-
-            const left =
-                hasVerticalLine(
-                    boxRow,
-                    boxCol
-                );
-
-
-            const right =
-                updatedVerticalLines.some(
-                    (edge) =>
-                        edge.id ===
-                        `${boxRow}-${boxCol + 1}`
-                );
-
-
-            if (
-                top &&
-                bottom &&
-                left &&
-                right
-            ) {
-
-                completedBoxes.push({
-                    id: `${boxRow}-${boxCol}`,
-                    row: boxRow,
-                    col: boxCol,
-                    player: currentPlayer
-                });
-
-            }
-
-        }
-
-
-        // Add completed boxes
-
-        if (
-            completedBoxes.length > 0
-        ) {
-
-            setBoxes((prev) => [
-                ...prev,
-                ...completedBoxes
-            ]);
-
-            // Same player gets another turn
-
-            return;
-        }
-
-
-        // No box completed
-        // Switch player
-
-        setCurrentPlayer(
-            currentPlayer === 1
-                ? 2
-                : 1
-        );
     };
 
 
     return (
 
-        <div className="dots-boxes-grid w-full mx-auto" style={{
-            "--grid-size": GRID_SIZE
-        }}>
+        <div className="dots-boxes-game">
 
-            {Array.from({
-                length: GRID_SIZE
-            }).map((_, row) => (
+            <div className="dots-boxes-grid w-full mx-auto" style={{
+                "--grid-size": GRID_SIZE
+            }}>
 
-                <React.Fragment key={row}>
+                {Array.from({
+                    length: GRID_SIZE
+                }).map((_, row) => (
 
-                    {/* ==================================
+                    <React.Fragment key={row}>
+
+                        {/* ==================================
                         DOT + HORIZONTAL EDGE ROW
                        ================================== */}
 
-                    <div className="dots-boxes-row">
+                        <div className="dots-boxes-row">
 
-                        {Array.from({
-                            length: GRID_SIZE
-                        }).map((_, col) => (
+                            {Array.from({
+                                length: GRID_SIZE
+                            }).map((_, col) => (
 
-                            <React.Fragment key={col}>
+                                <React.Fragment key={col}>
 
-                                {/* DOT */}
+                                    {/* DOT */}
 
-                                <div className="dot" />
-
-
-                                {/* HORIZONTAL EDGE */}
-
-                                {col <
-                                    GRID_SIZE - 1 && (() => {
-
-                                        const edgeId =
-                                            `${row}-${col}`;
-
-                                        const edge =
-                                            horizontalLines.find(
-                                                (item) =>
-                                                    item.id === edgeId
-                                            );
+                                    <div className="dot" />
 
 
-                                        return (
+                                    {/* HORIZONTAL EDGE */}
 
-                                            <button
-                                                className={
-                                                    `horizontal-edge ${edge
-                                                        ? `player-${edge.player}`
-                                                        : ""
-                                                    }`
-                                                }
-                                                onClick={() =>
-                                                    handleHorizontalClick(
-                                                        row,
-                                                        col
-                                                    )
-                                                }
-                                                aria-label={
-                                                    `Horizontal edge ${row}-${col}`
-                                                }
-                                            />
-
-                                        );
-
-                                    })()}
-
-                            </React.Fragment>
-
-                        ))}
-
-                    </div>
-
-
-                    {/* ==================================
-                        VERTICAL EDGE ROW
-                       ================================== */}
-
-                    {row <
-                        GRID_SIZE - 1 && (
-
-                            <div className="dots-boxes-row">
-
-                                {Array.from({
-                                    length: GRID_SIZE
-                                }).map((_, col) => (
-
-                                    <React.Fragment key={col}>
-
-                                        {/* VERTICAL EDGE */}
-
-                                        {(() => {
+                                    {col <
+                                        GRID_SIZE - 1 && (() => {
 
                                             const edgeId =
                                                 `${row}-${col}`;
 
                                             const edge =
-                                                verticalLines.find(
+                                                horizontalLines.find(
                                                     (item) =>
                                                         item.id === edgeId
                                                 );
@@ -618,19 +203,19 @@ const Grid = () => {
 
                                                 <button
                                                     className={
-                                                        `vertical-edge ${edge
+                                                        `horizontal-edge ${edge
                                                             ? `player-${edge.player}`
                                                             : ""
                                                         }`
                                                     }
                                                     onClick={() =>
-                                                        handleVerticalClick(
+                                                        handleHorizontalClick(
                                                             row,
                                                             col
                                                         )
                                                     }
                                                     aria-label={
-                                                        `Vertical edge ${row}-${col}`
+                                                        `Horizontal edge ${row}-${col}`
                                                     }
                                                 />
 
@@ -638,62 +223,120 @@ const Grid = () => {
 
                                         })()}
 
+                                </React.Fragment>
 
-                                        {/* SPACE / BOX */}
+                            ))}
 
-                                        {col <
-                                            GRID_SIZE - 1 && (
+                        </div>
 
-                                                <div
-                                                    className={
-                                                        `box ${boxes.find(
-                                                            (item) =>
-                                                                item.row === row &&
-                                                                item.col === col
-                                                        )
-                                                            ? `player-${boxes.find(
+
+                        {/* ==================================
+                        VERTICAL EDGE ROW
+                       ================================== */}
+
+                        {row <
+                            GRID_SIZE - 1 && (
+
+                                <div className="dots-boxes-row">
+
+                                    {Array.from({
+                                        length: GRID_SIZE
+                                    }).map((_, col) => (
+
+                                        <React.Fragment key={col}>
+
+                                            {/* VERTICAL EDGE */}
+
+                                            {(() => {
+
+                                                const edgeId =
+                                                    `${row}-${col}`;
+
+                                                const edge =
+                                                    verticalLines.find(
+                                                        (item) =>
+                                                            item.id === edgeId
+                                                    );
+
+
+                                                return (
+
+                                                    <button
+                                                        className={
+                                                            `vertical-edge ${edge
+                                                                ? `player-${edge.player}`
+                                                                : ""
+                                                            }`
+                                                        }
+                                                        onClick={() =>
+                                                            handleVerticalClick(
+                                                                row,
+                                                                col
+                                                            )
+                                                        }
+                                                        aria-label={
+                                                            `Vertical edge ${row}-${col}`
+                                                        }
+                                                    />
+
+                                                );
+
+                                            })()}
+
+
+                                            {/* SPACE / BOX */}
+
+                                            {col <
+                                                GRID_SIZE - 1 && (
+
+                                                    <div
+                                                        className={
+                                                            `box ${boxes.find(
                                                                 (item) =>
                                                                     item.row === row &&
                                                                     item.col === col
-                                                            ).player
+                                                            )
+                                                                ? `player-${boxes.find(
+                                                                    (item) =>
+                                                                        item.row === row &&
+                                                                        item.col === col
+                                                                ).player
+                                                                }`
+                                                                : ""
                                                             }`
-                                                            : ""
-                                                        }`
-                                                    }
-                                                >
+                                                        }
+                                                    >
 
-                                                    {
-                                                        boxes.find(
-                                                            (item) =>
-                                                                item.row === row &&
-                                                                item.col === col
-                                                        ) && (
+                                                        {
+                                                            boxes.find(
+                                                                (item) =>
+                                                                    item.row === row &&
+                                                                    item.col === col
+                                                            ) && (
 
-                                                            <span className="box-heart">
-                                                                <TiHeart />
-                                                            </span>
+                                                                <span className="box-heart">
+                                                                    <TiHeart />
+                                                                </span>
 
-                                                        )
-                                                    }
+                                                            )
+                                                        }
 
-                                                </div>
+                                                    </div>
 
-                                            )}
+                                                )}
 
-                                    </React.Fragment>
+                                        </React.Fragment>
 
-                                ))}
+                                    ))}
 
-                            </div>
+                                </div>
 
-                        )}
+                            )}
 
-                </React.Fragment>
+                    </React.Fragment>
 
-            ))}
-            <div style={{ color: "white" }}>
-                <p>Current Player: {currentPlayer}</p>
-                <p>Boxes: {boxes.length}</p>
+                ))}
+
             </div>
 
         </div>

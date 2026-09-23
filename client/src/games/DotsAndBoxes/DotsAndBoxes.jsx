@@ -5,6 +5,7 @@ import React, {
 } from "react";
 
 import Grid from "./Grid";
+import ScoreBoard from "./ScoreBoard";
 
 import { useLocation } from "react-router-dom";
 
@@ -73,6 +74,72 @@ const DotsAndBoxes = () => {
             }
         );
 
+    // ==========================================
+    // GAME STATE
+    // ==========================================
+
+    const [currentPlayer, setCurrentPlayer] =
+        useState(
+            restoredGame?.currentPlayer || 1
+        );
+
+    const [horizontalLines, setHorizontalLines] =
+        useState([]);
+
+    const [verticalLines, setVerticalLines] =
+        useState([]);
+
+    const [boxes, setBoxes] =
+        useState([]);
+
+    const [player1Score, setPlayer1Score] =
+        useState(0);
+
+    const [player2Score, setPlayer2Score] =
+        useState(0);
+
+    // ==========================================
+    // COMPLETE GAME STATE
+    // ==========================================
+
+    const getGameState = () => {
+
+        return {
+            currentPlayer,
+
+            horizontalLines,
+
+            verticalLines,
+
+            boxes,
+
+            scores: {
+                player1: player1Score,
+                player2: player2Score
+            }
+        };
+    };
+
+
+    // ==========================================
+    // RESET GAME
+    // ==========================================
+
+    const resetGame = () => {
+
+        setCurrentPlayer(1);
+
+        setHorizontalLines([]);
+
+        setVerticalLines([]);
+
+        setBoxes([]);
+
+        setPlayer1Score(0);
+
+        setPlayer2Score(0);
+    };
+
 
     // ==========================================
     // ROOM / PLAYER INFORMATION
@@ -86,15 +153,6 @@ const DotsAndBoxes = () => {
         playerNumber,
     } = usePlayerNames();
 
-
-    // ==========================================
-    // GAME STATE
-    // ==========================================
-
-    const [currentPlayer, setCurrentPlayer] =
-        useState(
-            restoredGame?.currentPlayer || null
-        );
 
 
     // ==========================================
@@ -178,27 +236,48 @@ const DotsAndBoxes = () => {
                 data
             );
 
-            const gameState =
-                data.gameState;
+            const gameState = data.gameState;
 
             if (!gameState) {
                 return;
             }
 
+            // Restore board
+            setHorizontalLines(
+                gameState.horizontalLines || []
+            );
 
+            setVerticalLines(
+                gameState.verticalLines || []
+            );
+
+            setBoxes(
+                gameState.boxes || []
+            );
+
+            // Restore turn
             setCurrentPlayer(
                 gameState.currentPlayer
             );
 
-
-            setScores(
+            // Restore scores
+            const newScores =
                 data.scores || {
                     1: 0,
                     2: 0
-                }
+                };
+
+            setScores(newScores);
+
+            setPlayer1Score(
+                newScores[1] || 0
             );
 
+            setPlayer2Score(
+                newScores[2] || 0
+            );
 
+            // Restore result state
             if (
                 gameState.status === "finished"
             ) {
@@ -214,7 +293,6 @@ const DotsAndBoxes = () => {
             } else {
 
                 setWinner(null);
-
                 setIsDraw(false);
 
             }
@@ -233,26 +311,37 @@ const DotsAndBoxes = () => {
                 data
             );
 
-            const gameState =
-                data.gameState;
-
-            if (!gameState) {
-                return;
-            }
-
-
-            setCurrentPlayer(
-                gameState.currentPlayer
+            setHorizontalLines(
+                data.horizontalLines || []
             );
 
+            setVerticalLines(
+                data.verticalLines || []
+            );
 
-            setScores(
+            setBoxes(
+                data.boxes || []
+            );
+
+            setCurrentPlayer(
+                data.currentPlayer
+            );
+
+            const newScores =
                 data.scores || {
                     1: 0,
                     2: 0
-                }
+                };
+
+            setScores(newScores);
+
+            setPlayer1Score(
+                newScores[1] || 0
             );
 
+            setPlayer2Score(
+                newScores[2] || 0
+            );
         };
 
 
@@ -301,7 +390,7 @@ const DotsAndBoxes = () => {
         );
 
         socket.on(
-            "gameUpdated",
+            "boardUpdated",
             handleGameUpdated
         );
 
@@ -358,7 +447,7 @@ const DotsAndBoxes = () => {
             );
 
             socket.off(
-                "gameUpdated",
+                "boardUpdated",
                 handleGameUpdated
             );
 
@@ -411,9 +500,29 @@ const DotsAndBoxes = () => {
             </div>
 
 
-            <div className="py-10">
+            <div className="py-10 dots-boxes-game">
 
-                <Grid />
+                <Grid
+                    currentPlayer={currentPlayer}
+                    setCurrentPlayer={setCurrentPlayer}
+
+                    horizontalLines={horizontalLines}
+                    setHorizontalLines={setHorizontalLines}
+
+                    verticalLines={verticalLines}
+                    setVerticalLines={setVerticalLines}
+
+                    boxes={boxes}
+                    setBoxes={setBoxes}
+
+                    setPlayer1Score={setPlayer1Score}
+                    setPlayer2Score={setPlayer2Score}
+                />
+                <ScoreBoard
+                    currentPlayer={currentPlayer}
+                    player1Score={player1Score}
+                    player2Score={player2Score}
+                />
 
             </div>
 

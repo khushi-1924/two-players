@@ -11,6 +11,7 @@ import rockPaperScissorsSocket from "./handlers/games/rockPaperScissors/rockPape
 import connectFourSocket from "./handlers/games/connectFour/connectFourSocket.js";
 import poisonHeartsSocket from "./handlers/games/poisonHearts/poisonHeartsSocket.js";
 import guessTheNumberSocket from "./handlers/games/guessTheNumber/guessTheNumberSocket.js";
+import dotsAndBoxesSocket from "./handlers/games/dotsAndBoxes/dotsAndBoxesSocket.js";
 
 
 const gameSocket = (io) => {
@@ -119,6 +120,11 @@ const gameSocket = (io) => {
             );
 
             guessTheNumberSocket(
+                io,
+                socket
+            );
+
+            dotsAndBoxesSocket(
                 io,
                 socket
             );

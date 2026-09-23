@@ -272,8 +272,8 @@
    ========================================== */
 
 .box {
-  width: 180%;
-  height: 180%;
+  width: 150%;
+  height: 150%;
 
   display: flex;
 
@@ -387,4 +387,205 @@
   100% {
     transform: scale(1);
   }
+}
+
+/* ==========================================
+   DOTS AND BOXES GAME
+   ========================================== */
+
+.dots-boxes-game {
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+
+/* ==========================================
+   SCOREBOARD
+   ========================================== */
+
+.dots-boxes-scoreboard {
+
+    width: min(92vw, 650px);
+
+    display: grid;
+
+    grid-template-columns:
+        1fr auto 1fr;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+
+/* ==========================================
+   PLAYER
+   ========================================== */
+
+.score-player {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    padding: 8px 15px;
+
+    border-radius: 12px;
+
+    opacity: 0.55;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Current player */
+
+.score-player.active-player {
+
+    opacity: 1;
+
+    transform: scale(1.05);
+}
+
+
+/* ==========================================
+   PLAYER NAME
+   ========================================== */
+
+.score-player-name {
+
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+
+/* ==========================================
+   HEART
+   ========================================== */
+
+.score-player-heart {
+
+    font-size: 24px;
+
+    line-height: 1;
+}
+
+
+.player-1-heart {
+
+    color: #6488cc;
+
+    text-shadow:
+        0 0 8px
+        rgba(
+            100,
+            136,
+            204,
+            0.5
+        );
+}
+
+
+.player-2-heart {
+
+    color: #f48fb1;
+
+    text-shadow:
+        0 0 8px
+        rgba(
+            244,
+            143,
+            177,
+            0.5
+        );
+}
+
+
+/* ==========================================
+   SCORE
+   ========================================== */
+
+.score-player-score {
+
+    font-size: 22px;
+
+    font-weight: 700;
+}
+
+
+/* ==========================================
+   TURN
+   ========================================== */
+
+.score-turn {
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    white-space: nowrap;
+
+    text-align: center;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 500px) {
+
+    .dots-boxes-scoreboard {
+
+        width: 94vw;
+
+        gap: 8px;
+    }
+
+
+    .score-player {
+
+        padding: 6px 8px;
+    }
+
+
+    .score-player-name {
+
+        font-size: 14px;
+    }
+
+
+    .score-player-heart {
+
+        font-size: 20px;
+    }
+
+
+    .score-player-score {
+
+        font-size: 18px;
+    }
+
+
+    .score-turn {
+
+        font-size: 12px;
+    }
+
 }
