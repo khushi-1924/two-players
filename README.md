@@ -80,38 +80,7 @@ One player chooses a number while the other player attempts to guess it using th
 
 The project follows a client-server architecture:
 
-```text
-                 ┌─────────────────────┐
-                 │       Players       │
-                 │   Player 1 / 2      │
-                 └──────────┬──────────┘
-                            │
-                            ▼
-                 ┌─────────────────────┐
-                 │   React Frontend    │
-                 │                     │
-                 │  Game UI & Logic    │
-                 │  Socket.IO Client   │
-                 └──────────┬──────────┘
-                            │
-                       WebSocket
-                       Connection
-                            │
-                            ▼
-                 ┌─────────────────────┐
-                 │   Node + Express    │
-                 │                     │
-                 │    Socket.IO        │
-                 │  Game State Logic   │
-                 └──────────┬──────────┘
-                            │
-                            ▼
-                 ┌─────────────────────┐
-                 │      MongoDB        │
-                 │                     │
-                 │   Game / Room Data  │
-                 └─────────────────────┘
-```
+<img width="1095" height="1436" alt="image" src="https://github.com/user-attachments/assets/c46aac7a-c005-44c0-8bb9-9ccdc6b137a2" />
 
 ---
 
@@ -325,6 +294,10 @@ Add screenshots of the application here.
 ### Guess The Number
 
 <img width="1917" height="837" alt="image" src="https://github.com/user-attachments/assets/ddf905ad-602a-4392-9b01-fa6d9edab82c" />
+
+### Dots and Boxes
+
+<img width="1917" height="866" alt="image" src="https://github.com/user-attachments/assets/a448f364-0c25-4252-b2ce-7a649dbccccf" />
 
 ---
 
