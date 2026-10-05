@@ -280,7 +280,7 @@ const dotsAndBoxesSocket = (io, socket) => {
                             game.boxes,
 
                         currentPlayer:
-                            game.currentPlayer,
+                            null,
 
                         scores:
                             room.scores,

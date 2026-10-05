@@ -1,23 +1,19 @@
 const restartDotsAndBoxesGame = (gameState) => {
-
     gameState.horizontalLines = [];
-
     gameState.verticalLines = [];
-
     gameState.boxes = [];
 
-    gameState.currentPlayer = 1;
+    // Switch starting player
+    gameState.startingPlayer =
+        gameState.startingPlayer === 1 ? 2 : 1;
 
-    gameState.startingPlayer = 1;
+    gameState.currentPlayer =
+        gameState.startingPlayer;
 
     gameState.status = "playing";
-
     gameState.winner = null;
 
-
     return gameState;
-
 };
-
 
 export default restartDotsAndBoxesGame;

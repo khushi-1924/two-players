@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {
     useEffect,
     useState,
@@ -25,6 +26,7 @@ import Instructions from
 
 import usePlayerNames from
     "../../hooks/usePlayerNames";
+import PlayAgainButton from "../../components/PlayAgain/PlayAgainButton";
 
 
 const DotsAndBoxes = () => {
@@ -159,47 +161,24 @@ const DotsAndBoxes = () => {
     // RESTART DOTS AND BOXES
     // ==========================================
 
-    const handleGameRestarted =
-        useCallback((data) => {
+    const handleGameRestarted = useCallback((data) => {
+        const gameState = data.gameState;
 
-            console.log(
-                "Dots and Boxes restarted:",
-                data
-            );
+        if (!gameState) return;
 
-            const gameState =
-                data.gameState;
+        setHorizontalLines(gameState.horizontalLines || []);
+        setVerticalLines(gameState.verticalLines || []);
+        setBoxes(gameState.boxes || []);
 
-            if (!gameState) {
+        setCurrentPlayer(gameState.currentPlayer);
+        setWinner(gameState.winner || null);
+        setIsDraw(gameState.draw || false);
 
-                console.error(
-                    "Restarted game state is missing"
-                );
+        setScores(data.scores || { 1: 0, 2: 0 });
 
-                return;
-            }
-
-
-            setCurrentPlayer(
-                gameState.currentPlayer
-            );
-
-            setWinner(
-                gameState.winner || null
-            );
-
-            setIsDraw(
-                gameState.draw || false
-            );
-
-            setScores(
-                data.scores || {
-                    1: 0,
-                    2: 0
-                }
-            );
-
-        }, []);
+        setPlayer1Score(data.scores?.[1] || 0);
+        setPlayer2Score(data.scores?.[2] || 0);
+    }, []);
 
 
     // ==========================================
@@ -356,27 +335,66 @@ const DotsAndBoxes = () => {
                 data
             );
 
-
-            setWinner(
-                data.winner || null
+            // Restore final board
+            setHorizontalLines(
+                data.horizontalLines || []
             );
 
-
-            setIsDraw(
-                data.draw || false
+            setVerticalLines(
+                data.verticalLines || []
             );
 
+            setBoxes(
+                data.boxes || []
+            );
 
-            setScores(
+            // Final scores
+            const finalScores =
                 data.scores || {
                     1: 0,
                     2: 0
-                }
+                };
+
+            setScores(finalScores);
+
+            setPlayer1Score(
+                finalScores[1] || 0
             );
 
+            setPlayer2Score(
+                finalScores[2] || 0
+            );
 
+            // Winner
+            setWinner(
+                data.winner ?? null
+            );
+
+            // If there is no winner, the game is a draw
+            setIsDraw(
+                data.winner == null
+            );
+
+            // Game is over — there is no turn anymore
             setCurrentPlayer(null);
 
+            const handleGameOver = (data) => {
+                console.log("🔥 GAME OVER EVENT RECEIVED:", data);
+
+                setHorizontalLines(data.horizontalLines || []);
+                setVerticalLines(data.verticalLines || []);
+                setBoxes(data.boxes || []);
+
+                const finalScores = data.scores || { 1: 0, 2: 0 };
+
+                setScores(finalScores);
+                setPlayer1Score(finalScores[1] || 0);
+                setPlayer2Score(finalScores[2] || 0);
+
+                setWinner(data.winner ?? null);
+                setIsDraw(data.winner == null);
+                setCurrentPlayer(null);
+            };
         };
 
 
@@ -465,6 +483,39 @@ const DotsAndBoxes = () => {
 
     }, [roomId]);
 
+    // ==========================================
+    // GAME STATUS MESSAGE
+    // ==========================================
+
+    const getStatusMessage = () => {
+
+        // GAME OVER
+        if (winner !== null) {
+
+            const winnerName =
+                playerNames[winner] ||
+                `Player ${winner}`;
+
+            if (winner === playerNumber) {
+                return `🏆 ${winnerName} wins!`;
+            }
+
+            return `🏆 ${winnerName} wins!`;
+        }
+
+        // DRAW
+        if (isDraw) {
+            return "It's a draw!";
+        }
+
+        // PLAYING
+        if (currentPlayer === playerNumber) {
+            return "Your turn";
+        }
+
+        return "Opponent's turn...";
+    };
+
 
     // ==========================================
     // UI
@@ -502,6 +553,30 @@ const DotsAndBoxes = () => {
 
             <div className="py-10 dots-boxes-game">
 
+                <p className="text-xl text-white text-center mb-6">
+                    {getStatusMessage()}
+                </p>
+
+                {winner !== null || isDraw ? (
+                    <div className="text-white text-center text-lg">
+
+                        <div>
+                            {playerNames[1] || "Player 1"}:{" "}
+                            {boxes.filter(
+                                (box) => box.player === 1
+                            ).length} boxes
+                        </div>
+
+                        <div>
+                            {playerNames[2] || "Player 2"}:{" "}
+                            {boxes.filter(
+                                (box) => box.player === 2
+                            ).length} boxes
+                        </div>
+
+                    </div>
+                ) : null}
+
                 <Grid
                     currentPlayer={currentPlayer}
                     setCurrentPlayer={setCurrentPlayer}
@@ -518,11 +593,11 @@ const DotsAndBoxes = () => {
                     setPlayer1Score={setPlayer1Score}
                     setPlayer2Score={setPlayer2Score}
                 />
-                <ScoreBoard
-                    currentPlayer={currentPlayer}
-                    player1Score={player1Score}
-                    player2Score={player2Score}
-                />
+
+                {winner !== null || isDraw ? (
+                    <PlayAgainButton onClick={requestPlayAgain} waitingForResponse={waitingForResponse} />
+
+                ) : null}
 
             </div>
 

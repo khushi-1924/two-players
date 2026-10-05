@@ -27,24 +27,9 @@ const ScoreBoard = ({
                     Player 1
                 </div>
 
-                <div className="score-player-heart player-1-heart">
-                    ♥
-                </div>
-
                 <div className="score-player-score">
                     {player1Score}
                 </div>
-
-            </div>
-
-
-            {/* ==================================
-                TURN INDICATOR
-               ================================== */}
-
-            <div className="score-turn">
-
-                {`Player ${currentPlayer}'s turn`}
 
             </div>
 
@@ -65,10 +50,6 @@ const ScoreBoard = ({
 
                 <div className="score-player-name">
                     Player 2
-                </div>
-
-                <div className="score-player-heart player-2-heart">
-                    ♥
                 </div>
 
                 <div className="score-player-score">

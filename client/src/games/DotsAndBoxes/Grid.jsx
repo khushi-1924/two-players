@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { TiHeart } from "react-icons/ti";
 import socket from "../../socket/socket";
