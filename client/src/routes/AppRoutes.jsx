@@ -26,6 +26,7 @@ import RoomSelection from "../rooms/RoomSelection";
 import GameRoom from "../rooms/GameRoom";
 
 import GameLayout from "../layouts/GameLayout";
+import DotsAndBoxes from "../games/DotsAndBoxes/DotsAndBoxes";
 
 
 const AppRoutes = () => {
@@ -94,6 +95,11 @@ const AppRoutes = () => {
         <Route
           path="/game/guess-the-number"
           element={<GuessTheNumber />}
+        />
+
+        <Route
+          path="/game/dots-and-boxes"
+          element={<DotsAndBoxes />}
         />
 
       </Route>

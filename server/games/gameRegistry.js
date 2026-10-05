@@ -13,6 +13,9 @@ import restartPoisonHearts from "./poisonHearts/restartGame.js";
 import createGuessTheNumberGame from "./guessTheNumber/createGame.js";
 import restartGuessTheNumber from "./guessTheNumber/restartGame.js";
 
+import createDotsAndBoxesGame from "./dotsAndBoxes/createGame.js";
+import restartDotsAndBoxes from "./dotsAndBoxes/restartGame.js";
+
 
 const gameRegistry = {
 
@@ -39,7 +42,12 @@ const gameRegistry = {
     guessTheNumber: {
         createGame: createGuessTheNumberGame,
         restartGame: restartGuessTheNumber
-    }
+    },
+
+    dotsAndBoxes: {
+        createGame: createDotsAndBoxesGame,
+        restartGame: restartDotsAndBoxes
+    },
 
 };
 
